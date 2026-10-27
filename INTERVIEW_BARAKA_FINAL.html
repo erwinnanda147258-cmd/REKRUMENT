@@ -1,0 +1,1871 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BARAKA Express — Recruitment Assessment System</title><style>*{box-sizing:border-box}body{margin:0;font:15px/1.6 system-ui,sans-serif;color:#172b45;background:#f3f6fa}header{background:#102b4e;color:white;padding:24px 32px;display:flex;justify-content:space-between;gap:20px;align-items:center}header strong{font-size:23px}header small{display:block;color:#c3d3e8}aside{width:245px;padding:24px 16px;border-right:1px solid #dce4ee;background:white;position:fixed;top:0;bottom:0;overflow:auto;padding-top:150px}header{position:relative;z-index:1}nav{display:grid;gap:8px}button{font:inherit;border:1px solid #cbd7e5;border-radius:7px;background:white;color:#173554;padding:10px 15px;cursor:pointer}button:hover{background:#edf3fa}button:focus-visible,input:focus,textarea:focus,select:focus{outline:3px solid #82b2f3;outline-offset:2px}.active,.primary,.selected{background:#123c6a!important;color:white!important;border-color:#123c6a}nav button{text-align:left}.danger{color:#a32e29}.shell{margin-left:245px;padding:28px 36px;max-width:1550px}h1{font-size:28px;margin:0 0 18px}h2{font-size:18px;margin:0 0 14px}h3{font-size:16px}p{white-space:pre-wrap;overflow-wrap:anywhere}.card{background:white;border:1px solid #dce4ee;border-radius:10px;padding:22px;margin:0 0 18px}.card .card{background:#f8fafc;box-shadow:none}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.metrics .card{padding:18px}.metrics h2{font-size:13px;color:#536980}.metrics strong{font-size:32px}.field{display:block;margin:14px 0}.field span{display:block;font-size:13px;font-weight:600;margin-bottom:6px}input:not([type=checkbox]),textarea,select{width:100%;border:1px solid #b8c8da;border-radius:6px;padding:10px;font:inherit;background:white;color:#172b45}textarea{min-height:85px;resize:vertical}input[type=checkbox]{width:19px;height:19px}.check{display:flex;align-items:center;gap:10px;margin:12px 0}.actions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}.scores button{min-width:48px}.scores .selected{outline:3px solid #b6d2f3}details{background:#eef4fa;padding:14px;border-radius:6px;margin:14px 0}summary{cursor:pointer;font-weight:600}progress{width:100%;height:9px;accent-color:#194c83}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 6px;border-bottom:1px solid #dce4ee;text-align:left;overflow-wrap:anywhere}.notice{background:#e8f0f9;padding:12px 18px;margin-bottom:16px;border-radius:6px}.notice:empty{display:none}.error{background:#fff0ed;color:#982c20}#saveStatus{font-size:12px}.privacy{font-size:12px;color:#536980;margin-top:24px}.backup{margin-top:25px;display:grid;gap:9px}.fileLabel{border:1px solid #cbd7e5;border-radius:7px;padding:10px;cursor:pointer}.fileLabel input{font-size:12px}.draft{color:#a32e29;border:2px solid #a32e29;padding:12px;font-weight:bold;margin-bottom:18px}#report{max-width:1000px}#report:empty{display:none}@media(max-width:850px){header{padding:18px;display:block}header strong{font-size:19px}aside{position:static;width:100%;padding:12px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}.backup{display:flex;flex-wrap:wrap;margin-top:12px}.fileLabel{max-width:260px}.shell{margin:0;padding:20px 12px}.privacy{margin:8px 0}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:16px}th,td{font-size:11px;padding:6px 3px}.actions button{flex-grow:1}}@page{size:A4;margin:14mm}@media print{body{background:white;color:black;font-size:10pt}header,aside,.shell>h1,#notice,#app>.actions{display:none!important}.shell{margin:0;padding:0;max-width:none}#app>*:not(#report){display:none!important}#report{display:block;max-width:none}#report .card{border:0;border-bottom:1px solid #bbb;border-radius:0;margin:0 0 8mm;padding:0 0 4mm}h1,h2,h3{break-after:avoid}tr,p{break-inside:avoid}table{font-size:9pt}button,input,textarea,select{display:none!important}.draft{font-size:14pt}#report h1{display:block!important;font-size:20pt}}</style></head><body><header><div><strong>BARAKA Express</strong><small>Recruitment Assessment System</small><small>Structured Interview &amp; Competency Evaluation</small></div><div id="saveStatus" role="status">Membuka penyimpanan…</div></header><aside><nav aria-label="Navigasi utama"></nav><div class="backup"><button id="backup">Backup JSON</button><label class="fileLabel">Import JSON<input id="import" type="file" accept=".json,application/json"></label><button id="csv">Export CSV</button><button id="reset" class="danger">Reset database</button></div><p class="privacy">Data tersimpan di browser/perangkat ini, tanpa sinkronisasi atau login. Penyimpanan browser bukan backup permanen. Gunakan satu tab dan ekspor backup rutin. Batasi akses perangkat dan simpan data pribadi seperlunya.</p></aside><main class="shell"><h1 id="pageTitle">Dashboard</h1><div id="notice" role="alert" class="notice"></div><div id="app"></div><div id="report"></div></main><script>const DEFAULTS={
+  "mt_staff": {
+    "id": "mt_staff",
+    "label": "Management Trainee (MT Staff)",
+    "version": 1,
+    "categories": [
+      {
+        "id": "mt_staff-c0",
+        "name": "Belajar dan adaptasi",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "mt_staff-c1",
+        "name": "Ketelitian",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "mt_staff-c2",
+        "name": "Integritas",
+        "weight": 20,
+        "safety": false
+      },
+      {
+        "id": "mt_staff-c3",
+        "name": "Pemecahan masalah",
+        "weight": 20,
+        "safety": false
+      },
+      {
+        "id": "mt_staff-c4",
+        "name": "Komunikasi dan rotasi",
+        "weight": 10,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "mt_staff-q1",
+        "position": "mt_staff",
+        "category": "mt_staff-c0",
+        "text": "Ceritakan saat belajar tugas baru di sekolah, rumah, atau pekerjaan. Bagaimana memastikan caranya benar?",
+        "purpose": "Menilai belajar dan adaptasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menebak tanpa memeriksa hasil",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencari petunjuk, mencoba dengan supervisi, dan meminta umpan balik.",
+          "Mencari petunjuk, mencoba dengan supervisi, dan meminta umpan balik.",
+          "Menjelaskan urutan mencari petunjuk, mencoba dengan supervisi, dan meminta umpan balik, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencari petunjuk, mencoba dengan supervisi, dan meminta umpan balik",
+        "risk": "Menebak tanpa memeriksa hasil",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q2",
+        "position": "mt_staff",
+        "category": "mt_staff-c1",
+        "text": "Dua daftar paket berbeda jumlahnya. Bagaimana kamu mencari sumber selisih?",
+        "purpose": "Menilai ketelitian melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengubah total agar terlihat sama",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencocokkan identitas satu per satu dan menelusuri bukti.",
+          "Mencocokkan identitas satu per satu dan menelusuri bukti.",
+          "Menjelaskan urutan mencocokkan identitas satu per satu dan menelusuri bukti, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencocokkan identitas satu per satu dan menelusuri bukti",
+        "risk": "Mengubah total agar terlihat sama",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q3",
+        "position": "mt_staff",
+        "category": "mt_staff-c2",
+        "text": "Kamu salah memasukkan data kiriman. Apa langkahmu?",
+        "purpose": "Menilai integritas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyembunyikan kesalahan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: melapor dan memperbaiki dengan jejak koreksi.",
+          "Melapor dan memperbaiki dengan jejak koreksi.",
+          "Menjelaskan urutan melapor dan memperbaiki dengan jejak koreksi, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Melapor dan memperbaiki dengan jejak koreksi",
+        "risk": "Menyembunyikan kesalahan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q4",
+        "position": "mt_staff",
+        "category": "mt_staff-c3",
+        "text": "Dua cabang meminta bantuan bersamaan. Bagaimana menentukan urutan?",
+        "purpose": "Menilai pemecahan masalah melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Memilih tanpa memeriksa kebutuhan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa urgensi dan dampak lalu menyepakati prioritas.",
+          "Memeriksa urgensi dan dampak lalu menyepakati prioritas.",
+          "Menjelaskan urutan memeriksa urgensi dan dampak lalu menyepakati prioritas, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa urgensi dan dampak lalu menyepakati prioritas",
+        "risk": "Memilih tanpa memeriksa kebutuhan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q5",
+        "position": "mt_staff",
+        "category": "mt_staff-c4",
+        "text": "Saat rotasi ke bagian yang belum dikenal, bagaimana menyiapkan diri?",
+        "purpose": "Menilai komunikasi dan rotasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengaku mampu tanpa mengetahui tugas",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengklarifikasi tugas, jadwal dan pendamping belajar.",
+          "Mengklarifikasi tugas, jadwal dan pendamping belajar.",
+          "Menjelaskan urutan mengklarifikasi tugas, jadwal dan pendamping belajar, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengklarifikasi tugas, jadwal dan pendamping belajar",
+        "risk": "Mengaku mampu tanpa mengetahui tugas",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q6",
+        "position": "mt_staff",
+        "category": "mt_staff-c0",
+        "text": "Setelah diberi koreksi, bagaimana kamu menerapkannya pada tugas berikutnya?",
+        "purpose": "Menilai belajar dan adaptasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengulangi cara lama",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencatat koreksi, mencoba ulang dan memeriksa hasil.",
+          "Mencatat koreksi, mencoba ulang dan memeriksa hasil.",
+          "Menjelaskan urutan mencatat koreksi, mencoba ulang dan memeriksa hasil, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencatat koreksi, mencoba ulang dan memeriksa hasil",
+        "risk": "Mengulangi cara lama",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q7",
+        "position": "mt_staff",
+        "category": "mt_staff-c3",
+        "text": "Antrean paket menumpuk dan ada salah label. Apa yang didahulukan?",
+        "purpose": "Menilai pemecahan masalah melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengirim paket bermasalah agar cepat",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengamankan paket salah label dan mengoordinasikan alur.",
+          "Mengamankan paket salah label dan mengoordinasikan alur.",
+          "Menjelaskan urutan mengamankan paket salah label dan mengoordinasikan alur, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengamankan paket salah label dan mengoordinasikan alur",
+        "risk": "Mengirim paket bermasalah agar cepat",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-q8",
+        "position": "mt_staff",
+        "category": "mt_staff-c4",
+        "text": "Bagaimana menjelaskan keterlambatan ke rekan cabang tanpa menyalahkan orang?",
+        "purpose": "Menilai komunikasi dan rotasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyalahkan orang tanpa bukti",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menyampaikan fakta, dampak dan rencana tindak lanjut.",
+          "Menyampaikan fakta, dampak dan rencana tindak lanjut.",
+          "Menjelaskan urutan menyampaikan fakta, dampak dan rencana tindak lanjut, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menyampaikan fakta, dampak dan rencana tindak lanjut",
+        "risk": "Menyalahkan orang tanpa bukti",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "mt_staff-info",
+        "position": "mt_staff",
+        "category": "mt_staff-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 60,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Bandingkan daftar A: PK01 tujuan Pontianak 2 koli; PK02 Singkawang 3 koli. Daftar B: PK01 Pontianak 2 koli; PK02 Sambas 2 koli. Jelaskan koreksi dan prioritas tindak lanjut.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Menemukan beda tujuan PK02",
+        "Menemukan selisih 1 koli PK02",
+        "Menahan perubahan sampai bukti dikonfirmasi",
+        "Menyampaikan ringkasan tindak lanjut"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "staff_kas": {
+    "id": "staff_kas",
+    "label": "Staff Kas",
+    "version": 1,
+    "categories": [
+      {
+        "id": "staff_kas-c0",
+        "name": "Ketelitian transaksi",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "staff_kas-c1",
+        "name": "Rekonsiliasi kas",
+        "weight": 30,
+        "safety": false
+      },
+      {
+        "id": "staff_kas-c2",
+        "name": "Integritas",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "staff_kas-c3",
+        "name": "Pelaporan dan dokumen",
+        "weight": 20,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "staff_kas-q1",
+        "position": "staff_kas",
+        "category": "staff_kas-c0",
+        "text": "Ada dua bukti pembayaran bernominal sama. Bagaimana memastikan bukan transaksi ganda?",
+        "purpose": "Menilai ketelitian transaksi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mencatat keduanya tanpa pemeriksaan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa nomor transaksi, waktu dan bukti penerimaan.",
+          "Memeriksa nomor transaksi, waktu dan bukti penerimaan.",
+          "Menjelaskan urutan memeriksa nomor transaksi, waktu dan bukti penerimaan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa nomor transaksi, waktu dan bukti penerimaan",
+        "risk": "Mencatat keduanya tanpa pemeriksaan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q2",
+        "position": "staff_kas",
+        "category": "staff_kas-c1",
+        "text": "Catatan kas Rp1.250.000 tetapi uang Rp1.200.000. Apa urutan pemeriksaanmu?",
+        "purpose": "Menilai rekonsiliasi kas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menutup selisih tanpa menelusuri",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghitung ulang, mencocokkan bukti, mencatat selisih dan melapor.",
+          "Menghitung ulang, mencocokkan bukti, mencatat selisih dan melapor.",
+          "Menjelaskan urutan menghitung ulang, mencocokkan bukti, mencatat selisih dan melapor, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghitung ulang, mencocokkan bukti, mencatat selisih dan melapor",
+        "risk": "Menutup selisih tanpa menelusuri",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q3",
+        "position": "staff_kas",
+        "category": "staff_kas-c2",
+        "text": "Rekan meminta meminjam uang kas sebentar. Apa tindakanmu?",
+        "purpose": "Menilai integritas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Meminjamkan tanpa pencatatan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menolak penggunaan di luar otorisasi dan mengikuti jalur pelaporan.",
+          "Menolak penggunaan di luar otorisasi dan mengikuti jalur pelaporan.",
+          "Menjelaskan urutan menolak penggunaan di luar otorisasi dan mengikuti jalur pelaporan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menolak penggunaan di luar otorisasi dan mengikuti jalur pelaporan",
+        "risk": "Meminjamkan tanpa pencatatan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q4",
+        "position": "staff_kas",
+        "category": "staff_kas-c3",
+        "text": "Bukti transaksi hilang menjelang tutup kas. Apa yang kamu lakukan?",
+        "purpose": "Menilai pelaporan dan dokumen melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Membuat bukti palsu",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menandai belum terverifikasi dan mencari bukti melalui pihak berwenang.",
+          "Menandai belum terverifikasi dan mencari bukti melalui pihak berwenang.",
+          "Menjelaskan urutan menandai belum terverifikasi dan mencari bukti melalui pihak berwenang, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menandai belum terverifikasi dan mencari bukti melalui pihak berwenang",
+        "risk": "Membuat bukti palsu",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q5",
+        "position": "staff_kas",
+        "category": "staff_kas-c0",
+        "text": "Nominal transfer berbeda dari tagihan. Bagaimana mencatatnya?",
+        "purpose": "Menilai ketelitian transaksi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengubah tagihan agar cocok",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memverifikasi transaksi dan mencatat perbedaan tanpa mengubah bukti.",
+          "Memverifikasi transaksi dan mencatat perbedaan tanpa mengubah bukti.",
+          "Menjelaskan urutan memverifikasi transaksi dan mencatat perbedaan tanpa mengubah bukti, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memverifikasi transaksi dan mencatat perbedaan tanpa mengubah bukti",
+        "risk": "Mengubah tagihan agar cocok",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q6",
+        "position": "staff_kas",
+        "category": "staff_kas-c1",
+        "text": "Ceritakan cara mengecek saldo awal, penerimaan dan pengeluaran. Boleh memakai contoh sekolah atau usaha keluarga.",
+        "purpose": "Menilai rekonsiliasi kas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Hanya menjumlahkan penerimaan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghitung saldo akhir dan mencocokkan dengan kas fisik.",
+          "Menghitung saldo akhir dan mencocokkan dengan kas fisik.",
+          "Menjelaskan urutan menghitung saldo akhir dan mencocokkan dengan kas fisik, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghitung saldo akhir dan mencocokkan dengan kas fisik",
+        "risk": "Hanya menjumlahkan penerimaan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q7",
+        "position": "staff_kas",
+        "category": "staff_kas-c2",
+        "text": "Atasan meminta tanggal transaksi diubah agar laporan tampak tepat waktu. Apa responsmu?",
+        "purpose": "Menilai integritas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengubah tanggal tanpa jejak",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mempertahankan tanggal faktual dan meminta koreksi resmi.",
+          "Mempertahankan tanggal faktual dan meminta koreksi resmi.",
+          "Menjelaskan urutan mempertahankan tanggal faktual dan meminta koreksi resmi, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mempertahankan tanggal faktual dan meminta koreksi resmi",
+        "risk": "Mengubah tanggal tanpa jejak",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-q8",
+        "position": "staff_kas",
+        "category": "staff_kas-c3",
+        "text": "Bagaimana menyerahkan laporan kas agar orang berikutnya bisa memeriksa?",
+        "purpose": "Menilai pelaporan dan dokumen melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyerahkan angka tanpa bukti",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menyusun bukti, ringkasan dan daftar selisih dengan konfirmasi penerima.",
+          "Menyusun bukti, ringkasan dan daftar selisih dengan konfirmasi penerima.",
+          "Menjelaskan urutan menyusun bukti, ringkasan dan daftar selisih dengan konfirmasi penerima, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menyusun bukti, ringkasan dan daftar selisih dengan konfirmasi penerima",
+        "risk": "Menyerahkan angka tanpa bukti",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_kas-info",
+        "position": "staff_kas",
+        "category": "staff_kas-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 60,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Saldo awal Rp500.000, penerimaan Rp350.000 dan Rp200.000, pengeluaran sah Rp150.000. Kas fisik Rp850.000. Hitung saldo seharusnya dan jelaskan selisih. Kunci penguji: saldo Rp900.000; kurang Rp50.000.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Menghitung saldo Rp900.000",
+        "Mengidentifikasi kurang Rp50.000",
+        "Mencocokkan bukti tanpa mengubah fakta",
+        "Mencatat dan melaporkan selisih"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "staff_armada": {
+    "id": "staff_armada",
+    "label": "Staff Armada",
+    "version": 1,
+    "categories": [
+      {
+        "id": "staff_armada-c0",
+        "name": "Monitoring dan dokumen",
+        "weight": 30,
+        "safety": false
+      },
+      {
+        "id": "staff_armada-c1",
+        "name": "Pemeliharaan",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "staff_armada-c2",
+        "name": "Kelayakan dan keselamatan",
+        "weight": 30,
+        "safety": true
+      },
+      {
+        "id": "staff_armada-c3",
+        "name": "Koordinasi",
+        "weight": 15,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "staff_armada-q1",
+        "position": "staff_armada",
+        "category": "staff_armada-c0",
+        "text": "Bagaimana memantau kendaraan, masa berlaku dokumen dan jadwal tugas?",
+        "purpose": "Menilai monitoring dan dokumen melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengandalkan ingatan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memakai daftar kendaraan dengan tanggal, status dan pengingat.",
+          "Memakai daftar kendaraan dengan tanggal, status dan pengingat.",
+          "Menjelaskan urutan memakai daftar kendaraan dengan tanggal, status dan pengingat, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memakai daftar kendaraan dengan tanggal, status dan pengingat",
+        "risk": "Mengandalkan ingatan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-q2",
+        "position": "staff_armada",
+        "category": "staff_armada-c1",
+        "text": "Dua kendaraan jatuh tempo servis saat permintaan tinggi. Apa rencanamu?",
+        "purpose": "Menilai pemeliharaan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menunda semua servis tanpa evaluasi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menilai prioritas keselamatan dan mengatur pengganti serta jadwal bengkel.",
+          "Menilai prioritas keselamatan dan mengatur pengganti serta jadwal bengkel.",
+          "Menjelaskan urutan menilai prioritas keselamatan dan mengatur pengganti serta jadwal bengkel, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menilai prioritas keselamatan dan mengatur pengganti serta jadwal bengkel",
+        "risk": "Menunda semua servis tanpa evaluasi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-q3",
+        "position": "staff_armada",
+        "category": "staff_armada-c2",
+        "text": "Driver melaporkan rem tidak normal sebelum berangkat. Apa keputusanmu?",
+        "purpose": "Menilai kelayakan dan keselamatan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Tetap memberangkatkan kendaraan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menahan operasi dan meminta pemeriksaan teknisi berwenang.",
+          "Menahan operasi dan meminta pemeriksaan teknisi berwenang.",
+          "Menjelaskan urutan menahan operasi dan meminta pemeriksaan teknisi berwenang, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menahan operasi dan meminta pemeriksaan teknisi berwenang",
+        "risk": "Tetap memberangkatkan kendaraan",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "staff_armada-q4",
+        "position": "staff_armada",
+        "category": "staff_armada-c3",
+        "text": "Kendaraan mogok saat pengiriman. Bagaimana koordinasinya?",
+        "purpose": "Menilai koordinasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Hanya menyuruh driver mengejar waktu",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memastikan lokasi aman lalu menghubungi driver, bengkel dan operasional.",
+          "Memastikan lokasi aman lalu menghubungi driver, bengkel dan operasional.",
+          "Menjelaskan urutan memastikan lokasi aman lalu menghubungi driver, bengkel dan operasional, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memastikan lokasi aman lalu menghubungi driver, bengkel dan operasional",
+        "risk": "Hanya menyuruh driver mengejar waktu",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-q5",
+        "position": "staff_armada",
+        "category": "staff_armada-c0",
+        "text": "Ada dokumen kendaraan yang segera kedaluwarsa. Bagaimana tindak lanjutnya?",
+        "purpose": "Menilai monitoring dan dokumen melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengabaikan selama kendaraan berjalan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa tanggal dan mengurus pembaruan sebelum penugasan.",
+          "Memeriksa tanggal dan mengurus pembaruan sebelum penugasan.",
+          "Menjelaskan urutan memeriksa tanggal dan mengurus pembaruan sebelum penugasan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa tanggal dan mengurus pembaruan sebelum penugasan",
+        "risk": "Mengabaikan selama kendaraan berjalan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-q6",
+        "position": "staff_armada",
+        "category": "staff_armada-c1",
+        "text": "Biaya perbaikan kendaraan berulang meningkat. Apa yang kamu telusuri?",
+        "purpose": "Menilai pemeliharaan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengganti komponen tanpa diagnosis",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa riwayat gangguan, pekerjaan bengkel dan hasil pemeriksaan.",
+          "Memeriksa riwayat gangguan, pekerjaan bengkel dan hasil pemeriksaan.",
+          "Menjelaskan urutan memeriksa riwayat gangguan, pekerjaan bengkel dan hasil pemeriksaan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa riwayat gangguan, pekerjaan bengkel dan hasil pemeriksaan",
+        "risk": "Mengganti komponen tanpa diagnosis",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-q7",
+        "position": "staff_armada",
+        "category": "staff_armada-c2",
+        "text": "Daftar pemeriksaan ditandatangani tetapi ban terlihat rusak. Apa tindakanmu?",
+        "purpose": "Menilai kelayakan dan keselamatan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menganggap tanda tangan sudah cukup",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memverifikasi kondisi aktual dan membatasi operasi sampai layak.",
+          "Memverifikasi kondisi aktual dan membatasi operasi sampai layak.",
+          "Menjelaskan urutan memverifikasi kondisi aktual dan membatasi operasi sampai layak, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memverifikasi kondisi aktual dan membatasi operasi sampai layak",
+        "risk": "Menganggap tanda tangan sudah cukup",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "staff_armada-q8",
+        "position": "staff_armada",
+        "category": "staff_armada-c3",
+        "text": "Bengkel terlambat menyelesaikan perbaikan. Bagaimana menyampaikan ke cabang?",
+        "purpose": "Menilai koordinasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menjanjikan waktu tanpa konfirmasi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengonfirmasi estimasi dan opsi armada pengganti secara faktual.",
+          "Mengonfirmasi estimasi dan opsi armada pengganti secara faktual.",
+          "Menjelaskan urutan mengonfirmasi estimasi dan opsi armada pengganti secara faktual, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengonfirmasi estimasi dan opsi armada pengganti secara faktual",
+        "risk": "Menjanjikan waktu tanpa konfirmasi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_armada-info",
+        "position": "staff_armada",
+        "category": "staff_armada-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 60,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Daftar simulasi: A rem tidak normal; B servis besok; C dokumen berakhir hari ini. Susun status kelayakan dan rencana pengganti; tidak ada tugas mengemudi.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Menahan A sampai pemeriksaan kompeten",
+        "Menjadwalkan servis B",
+        "Memverifikasi dokumen C sebelum tugas",
+        "Mengoordinasikan pengganti dan mencatat status"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "staff_qc": {
+    "id": "staff_qc",
+    "label": "Staff Quality Control (QC)",
+    "version": 1,
+    "categories": [
+      {
+        "id": "staff_qc-c0",
+        "name": "Ketelitian identitas dan jumlah",
+        "weight": 30,
+        "safety": false
+      },
+      {
+        "id": "staff_qc-c1",
+        "name": "Kondisi dan penanganan barang",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "staff_qc-c2",
+        "name": "Dokumentasi dan pelaporan",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "staff_qc-c3",
+        "name": "Integritas dan SOP",
+        "weight": 20,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "staff_qc-q1",
+        "position": "staff_qc",
+        "category": "staff_qc-c0",
+        "text": "Label paket berbeda dengan daftar kiriman. Apa yang diperiksa sebelum dilepas?",
+        "purpose": "Menilai ketelitian identitas dan jumlah melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengirim berdasarkan perkiraan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencocokkan identitas dan menahan paket sampai terverifikasi.",
+          "Mencocokkan identitas dan menahan paket sampai terverifikasi.",
+          "Menjelaskan urutan mencocokkan identitas dan menahan paket sampai terverifikasi, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencocokkan identitas dan menahan paket sampai terverifikasi",
+        "risk": "Mengirim berdasarkan perkiraan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q2",
+        "position": "staff_qc",
+        "category": "staff_qc-c1",
+        "text": "Kardus basah ditemukan saat bongkar. Apa langkahmu?",
+        "purpose": "Menilai kondisi dan penanganan barang melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyembunyikan bagian basah",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memisahkan secara aman dan mencatat kondisi tanpa membuka di luar kewenangan.",
+          "Memisahkan secara aman dan mencatat kondisi tanpa membuka di luar kewenangan.",
+          "Menjelaskan urutan memisahkan secara aman dan mencatat kondisi tanpa membuka di luar kewenangan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memisahkan secara aman dan mencatat kondisi tanpa membuka di luar kewenangan",
+        "risk": "Menyembunyikan bagian basah",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q3",
+        "position": "staff_qc",
+        "category": "staff_qc-c2",
+        "text": "Bagaimana membuat laporan kerusakan yang dapat ditelusuri?",
+        "purpose": "Menilai dokumentasi dan pelaporan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Melapor tanpa identitas paket",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencatat id, waktu, kondisi, bukti dan pihak terkait.",
+          "Mencatat ID, waktu, kondisi, bukti dan pihak terkait.",
+          "Menjelaskan urutan mencatat id, waktu, kondisi, bukti dan pihak terkait, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencatat ID, waktu, kondisi, bukti dan pihak terkait",
+        "risk": "Melapor tanpa identitas paket",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q4",
+        "position": "staff_qc",
+        "category": "staff_qc-c3",
+        "text": "Rekan meminta paket rusak dinyatakan baik agar target tercapai. Apa responsmu?",
+        "purpose": "Menilai integritas dan sop melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyetujui agar target tercapai",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menolak perubahan fakta dan mengikuti eskalasi.",
+          "Menolak perubahan fakta dan mengikuti eskalasi.",
+          "Menjelaskan urutan menolak perubahan fakta dan mengikuti eskalasi, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menolak perubahan fakta dan mengikuti eskalasi",
+        "risk": "Menyetujui agar target tercapai",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q5",
+        "position": "staff_qc",
+        "category": "staff_qc-c0",
+        "text": "Daftar berisi 30 paket, hitunganmu 29. Apa berikutnya?",
+        "purpose": "Menilai ketelitian identitas dan jumlah melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menandatangani 30 paket",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghitung ulang dan menelusuri alur sebelum pengesahan.",
+          "Menghitung ulang dan menelusuri alur sebelum pengesahan.",
+          "Menjelaskan urutan menghitung ulang dan menelusuri alur sebelum pengesahan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghitung ulang dan menelusuri alur sebelum pengesahan",
+        "risk": "Menandatangani 30 paket",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q6",
+        "position": "staff_qc",
+        "category": "staff_qc-c1",
+        "text": "Barang rapuh ditumpuk di bawah barang berat. Apa tindakanmu?",
+        "purpose": "Menilai kondisi dan penanganan barang melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Membiarkan agar tidak terlambat",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghentikan penanganan berisiko dan mengatur ulang sesuai petunjuk.",
+          "Menghentikan penanganan berisiko dan mengatur ulang sesuai petunjuk.",
+          "Menjelaskan urutan menghentikan penanganan berisiko dan mengatur ulang sesuai petunjuk, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghentikan penanganan berisiko dan mengatur ulang sesuai petunjuk",
+        "risk": "Membiarkan agar tidak terlambat",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q7",
+        "position": "staff_qc",
+        "category": "staff_qc-c2",
+        "text": "Volume tinggi membuat pemeriksaan menumpuk. Bagaimana menjaga bukti pemeriksaan?",
+        "purpose": "Menilai dokumentasi dan pelaporan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mencentang semua tanpa memeriksa",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengatur prioritas risiko dan meminta bantuan tanpa menghapus pemeriksaan wajib.",
+          "Mengatur prioritas risiko dan meminta bantuan tanpa menghapus pemeriksaan wajib.",
+          "Menjelaskan urutan mengatur prioritas risiko dan meminta bantuan tanpa menghapus pemeriksaan wajib, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengatur prioritas risiko dan meminta bantuan tanpa menghapus pemeriksaan wajib",
+        "risk": "Mencentang semua tanpa memeriksa",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-q8",
+        "position": "staff_qc",
+        "category": "staff_qc-c3",
+        "text": "Driver memprotes temuan QC. Bagaimana menyelesaikan?",
+        "purpose": "Menilai integritas dan sop melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menghapus temuan tanpa verifikasi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menunjukkan bukti dan memverifikasi bersama sesuai sop.",
+          "Menunjukkan bukti dan memverifikasi bersama sesuai SOP.",
+          "Menjelaskan urutan menunjukkan bukti dan memverifikasi bersama sesuai sop, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menunjukkan bukti dan memverifikasi bersama sesuai SOP",
+        "risk": "Menghapus temuan tanpa verifikasi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "staff_qc-info",
+        "position": "staff_qc",
+        "category": "staff_qc-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 60,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Sediakan paket dummy P01 dan P02. Daftar: P01 dua koli tujuan Pontianak, P02 satu koli tujuan Sambas. Beri label P02 Singkawang dan satu kardus P01 tanda robek.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Mencocokkan ID dan jumlah",
+        "Menemukan salah label P02",
+        "Mencatat kerusakan P01",
+        "Memisahkan dan melaporkan ketidaksesuaian"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "tkbm": {
+    "id": "tkbm",
+    "label": "TKBM",
+    "version": 1,
+    "categories": [
+      {
+        "id": "tkbm-c0",
+        "name": "Keselamatan kerja",
+        "weight": 35,
+        "safety": true
+      },
+      {
+        "id": "tkbm-c1",
+        "name": "Penanganan barang",
+        "weight": 30,
+        "safety": false
+      },
+      {
+        "id": "tkbm-c2",
+        "name": "Ketelitian dan integritas",
+        "weight": 20,
+        "safety": false
+      },
+      {
+        "id": "tkbm-c3",
+        "name": "Kerja sama dan kedisiplinan",
+        "weight": 15,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "tkbm-q1",
+        "position": "tkbm",
+        "category": "tkbm-c1",
+        "text": "Kalau kardus sudah robek sebelum dinaikkan, apa yang kamu lakukan?",
+        "purpose": "Menilai penanganan barang melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Tetap memuat tanpa memberi tahu",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memisahkan dengan aman dan melaporkan kondisi sebelum dimuat.",
+          "Memisahkan dengan aman dan melaporkan kondisi sebelum dimuat.",
+          "Menjelaskan urutan memisahkan dengan aman dan melaporkan kondisi sebelum dimuat, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memisahkan dengan aman dan melaporkan kondisi sebelum dimuat",
+        "risk": "Tetap memuat tanpa memberi tahu",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "tkbm-q2",
+        "position": "tkbm",
+        "category": "tkbm-c0",
+        "text": "Kalau barang terlalu berat diangkat sendiri, kamu akan bagaimana?",
+        "purpose": "Menilai keselamatan kerja melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Tetap mengangkat sendiri dengan cara berbahaya",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: tidak memaksakan diri, meminta bantuan atau alat sesuai sop dan mengecek jalur.",
+          "Tidak memaksakan diri, meminta bantuan atau alat sesuai SOP dan mengecek jalur.",
+          "Menjelaskan urutan tidak memaksakan diri, meminta bantuan atau alat sesuai sop dan mengecek jalur, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Tidak memaksakan diri, meminta bantuan atau alat sesuai SOP dan mengecek jalur",
+        "risk": "Tetap mengangkat sendiri dengan cara berbahaya",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "tkbm-q3",
+        "position": "tkbm",
+        "category": "tkbm-c1",
+        "text": "Kalau tumpukan barang miring dan hampir jatuh, apa tindakanmu?",
+        "purpose": "Menilai penanganan barang melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menahan tumpukan dengan badan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menjauhkan orang, menghentikan pekerjaan dan meminta penataan aman.",
+          "Menjauhkan orang, menghentikan pekerjaan dan meminta penataan aman.",
+          "Menjelaskan urutan menjauhkan orang, menghentikan pekerjaan dan meminta penataan aman, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menjauhkan orang, menghentikan pekerjaan dan meminta penataan aman",
+        "risk": "Menahan tumpukan dengan badan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "tkbm-q4",
+        "position": "tkbm",
+        "category": "tkbm-c2",
+        "text": "Hitungan barang berbeda dengan catatan. Bagaimana menyelesaikannya?",
+        "purpose": "Menilai ketelitian dan integritas melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengubah hitungan agar sama",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghitung ulang bersama dan melaporkan selisih sebelum tanda tangan.",
+          "Menghitung ulang bersama dan melaporkan selisih sebelum tanda tangan.",
+          "Menjelaskan urutan menghitung ulang bersama dan melaporkan selisih sebelum tanda tangan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghitung ulang bersama dan melaporkan selisih sebelum tanda tangan",
+        "risk": "Mengubah hitungan agar sama",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "tkbm-q5",
+        "position": "tkbm",
+        "category": "tkbm-c3",
+        "text": "Teman membanting paket supaya cepat selesai. Apa yang kamu lakukan?",
+        "purpose": "Menilai kerja sama dan kedisiplinan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Ikut membanting paket",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengingatkan cara aman dan meminta bantuan pengawas bila berlanjut.",
+          "Mengingatkan cara aman dan meminta bantuan pengawas bila berlanjut.",
+          "Menjelaskan urutan mengingatkan cara aman dan meminta bantuan pengawas bila berlanjut, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengingatkan cara aman dan meminta bantuan pengawas bila berlanjut",
+        "risk": "Ikut membanting paket",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "tkbm-q6",
+        "position": "tkbm",
+        "category": "tkbm-c0",
+        "text": "Mandor meminta cara kerja yang berbahaya. Apa responsmu?",
+        "purpose": "Menilai keselamatan kerja melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Patuh meskipun berbahaya",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghentikan langkah berbahaya dan meminta cara aman kepada pengawas.",
+          "Menghentikan langkah berbahaya dan meminta cara aman kepada pengawas.",
+          "Menjelaskan urutan menghentikan langkah berbahaya dan meminta cara aman kepada pengawas, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghentikan langkah berbahaya dan meminta cara aman kepada pengawas",
+        "risk": "Patuh meskipun berbahaya",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "tkbm-q7",
+        "position": "tkbm",
+        "category": "tkbm-c0",
+        "text": "Kamu sangat capek dan sulit fokus. Apa yang kamu lakukan?",
+        "purpose": "Menilai keselamatan kerja melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Memaksakan kerja meski tidak fokus",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengamankan pekerjaan lalu melapor dan meminta istirahat atau pergantian.",
+          "Mengamankan pekerjaan lalu melapor dan meminta istirahat atau pergantian.",
+          "Menjelaskan urutan mengamankan pekerjaan lalu melapor dan meminta istirahat atau pergantian, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengamankan pekerjaan lalu melapor dan meminta istirahat atau pergantian",
+        "risk": "Memaksakan kerja meski tidak fokus",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "tkbm-q8",
+        "position": "tkbm",
+        "category": "tkbm-c3",
+        "text": "Kalau terlambat datang dan tim sudah mulai muat, apa yang kamu lakukan?",
+        "purpose": "Menilai kerja sama dan kedisiplinan melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Masuk kerja tanpa koordinasi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memberi kabar, melapor saat datang dan masuk tugas sesuai arahan aman.",
+          "Memberi kabar, melapor saat datang dan masuk tugas sesuai arahan aman.",
+          "Menjelaskan urutan memberi kabar, melapor saat datang dan masuk tugas sesuai arahan aman, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memberi kabar, melapor saat datang dan masuk tugas sesuai arahan aman",
+        "risk": "Masuk kerja tanpa koordinasi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "tkbm-info",
+        "position": "tkbm",
+        "category": "tkbm-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 50,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Gunakan kardus kosong/ringan. Penguji menunjukkan jalur terhalang, kardus bertanda rapuh dan kemasan robek. Minta kandidat mengenali bahaya dan menunjukkan pemindahan aman. Jangan memakai beban berat.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Mengenali dan mengamankan jalur",
+        "Memeriksa kondisi serta label",
+        "Meminta bantuan/alat saat diperlukan",
+        "Memindahkan barang ringan dengan aman sesuai arahan"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "kenek": {
+    "id": "kenek",
+    "label": "Kenek Distribusi",
+    "version": 1,
+    "categories": [
+      {
+        "id": "kenek-c0",
+        "name": "Keselamatan distribusi",
+        "weight": 25,
+        "safety": true
+      },
+      {
+        "id": "kenek-c1",
+        "name": "Ketelitian barang dan serah terima",
+        "weight": 30,
+        "safety": false
+      },
+      {
+        "id": "kenek-c2",
+        "name": "Kejujuran dan tanggung jawab",
+        "weight": 20,
+        "safety": false
+      },
+      {
+        "id": "kenek-c3",
+        "name": "Kerja sama dan komunikasi",
+        "weight": 15,
+        "safety": false
+      },
+      {
+        "id": "kenek-c4",
+        "name": "Kesiapan operasional",
+        "weight": 10,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "kenek-q1",
+        "position": "kenek",
+        "category": "kenek-c1",
+        "text": "Catatan berisi 20 paket tetapi di kendaraan hanya 19. Apa tindakanmu?",
+        "purpose": "Menilai ketelitian barang dan serah terima melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menandatangani 20 paket",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menghitung ulang dan memberi tahu driver serta cabang sebelum pengesahan.",
+          "Menghitung ulang dan memberi tahu driver serta cabang sebelum pengesahan.",
+          "Menjelaskan urutan menghitung ulang dan memberi tahu driver serta cabang sebelum pengesahan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menghitung ulang dan memberi tahu driver serta cabang sebelum pengesahan",
+        "risk": "Menandatangani 20 paket",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q2",
+        "position": "kenek",
+        "category": "kenek-c2",
+        "text": "Barang penyok ditemukan saat diturunkan. Apa yang kamu lakukan?",
+        "purpose": "Menilai kejujuran dan tanggung jawab melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyembunyikan kerusakan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mencatat kondisi dan melapor secara jujur sebelum serah terima.",
+          "Mencatat kondisi dan melapor secara jujur sebelum serah terima.",
+          "Menjelaskan urutan mencatat kondisi dan melapor secara jujur sebelum serah terima, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mencatat kondisi dan melapor secara jujur sebelum serah terima",
+        "risk": "Menyembunyikan kerusakan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q3",
+        "position": "kenek",
+        "category": "kenek-c1",
+        "text": "Penerima tidak mau mengikuti tanda terima. Bagaimana kamu menanganinya?",
+        "purpose": "Menilai ketelitian barang dan serah terima melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menandatangani sendiri atas nama penerima",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menjelaskan prosedur dan meminta arahan cabang tanpa memalsukan bukti.",
+          "Menjelaskan prosedur dan meminta arahan cabang tanpa memalsukan bukti.",
+          "Menjelaskan urutan menjelaskan prosedur dan meminta arahan cabang tanpa memalsukan bukti, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menjelaskan prosedur dan meminta arahan cabang tanpa memalsukan bukti",
+        "risk": "Menandatangani sendiri atas nama penerima",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q4",
+        "position": "kenek",
+        "category": "kenek-c0",
+        "text": "Muatan bergeser saat perjalanan. Apa tindakanmu?",
+        "purpose": "Menilai keselamatan distribusi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Membetulkan sambil kendaraan berjalan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memberi tahu driver untuk berhenti di tempat aman dan mengamankan sesuai sop.",
+          "Memberi tahu driver untuk berhenti di tempat aman dan mengamankan sesuai SOP.",
+          "Menjelaskan urutan memberi tahu driver untuk berhenti di tempat aman dan mengamankan sesuai sop, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memberi tahu driver untuk berhenti di tempat aman dan mengamankan sesuai SOP",
+        "risk": "Membetulkan sambil kendaraan berjalan",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "kenek-q5",
+        "position": "kenek",
+        "category": "kenek-c3",
+        "text": "Driver menyuruh cara angkat yang bisa merusak barang. Apa responsmu?",
+        "purpose": "Menilai kerja sama dan komunikasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menuruti tanpa mempertimbangkan risiko",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: menyampaikan risiko dan mengusulkan cara aman, lalu eskalasi bila perlu.",
+          "Menyampaikan risiko dan mengusulkan cara aman, lalu eskalasi bila perlu.",
+          "Menjelaskan urutan menyampaikan risiko dan mengusulkan cara aman, lalu eskalasi bila perlu, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Menyampaikan risiko dan mengusulkan cara aman, lalu eskalasi bila perlu",
+        "risk": "Menuruti tanpa mempertimbangkan risiko",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q6",
+        "position": "kenek",
+        "category": "kenek-c3",
+        "text": "Pelanggan marah karena barang terlambat. Apa yang kamu katakan?",
+        "purpose": "Menilai kerja sama dan komunikasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Membalas marah atau menjanjikan tanpa dasar",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mendengarkan, menyampaikan fakta dan menghubungi cabang untuk solusi.",
+          "Mendengarkan, menyampaikan fakta dan menghubungi cabang untuk solusi.",
+          "Menjelaskan urutan mendengarkan, menyampaikan fakta dan menghubungi cabang untuk solusi, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mendengarkan, menyampaikan fakta dan menghubungi cabang untuk solusi",
+        "risk": "Membalas marah atau menjanjikan tanpa dasar",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q7",
+        "position": "kenek",
+        "category": "kenek-c4",
+        "text": "Pengiriman belum selesai menjelang malam. Apa rencana bersama driver dan cabang?",
+        "purpose": "Menilai kesiapan operasional melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Memaksa lanjut meski kondisi tidak aman",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengecek kondisi tim, jadwal dan rencana aman bersama cabang.",
+          "Mengecek kondisi tim, jadwal dan rencana aman bersama cabang.",
+          "Menjelaskan urutan mengecek kondisi tim, jadwal dan rencana aman bersama cabang, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengecek kondisi tim, jadwal dan rencana aman bersama cabang",
+        "risk": "Memaksa lanjut meski kondisi tidak aman",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-q8",
+        "position": "kenek",
+        "category": "kenek-c2",
+        "text": "Ada paket tertinggal setelah serah terima. Apa langkahmu?",
+        "purpose": "Menilai kejujuran dan tanggung jawab melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menyimpan tanpa memberi tahu",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: melapor segera dan menelusuri identitas serta koreksi bukti.",
+          "Melapor segera dan menelusuri identitas serta koreksi bukti.",
+          "Menjelaskan urutan melapor segera dan menelusuri identitas serta koreksi bukti, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Melapor segera dan menelusuri identitas serta koreksi bukti",
+        "risk": "Menyimpan tanpa memberi tahu",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "kenek-info",
+        "position": "kenek",
+        "category": "kenek-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 50,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Pakai 3 paket dummy dan daftar 4 paket. Satu paket bertanda rusak dan pengikat contoh longgar. Lakukan simulasi pemeriksaan dan tanda terima.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Menemukan selisih jumlah",
+        "Mencatat kerusakan",
+        "Mengenali pengikat tidak aman",
+        "Melakukan serah terima tanpa memalsukan bukti"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  },
+  "driver_distribusi": {
+    "id": "driver_distribusi",
+    "label": "Driver Distribusi",
+    "version": 1,
+    "categories": [
+      {
+        "id": "driver_distribusi-c0",
+        "name": "Keselamatan berkendara",
+        "weight": 35,
+        "safety": true
+      },
+      {
+        "id": "driver_distribusi-c1",
+        "name": "Penguasaan kendaraan dan rute",
+        "weight": 25,
+        "safety": false
+      },
+      {
+        "id": "driver_distribusi-c2",
+        "name": "Muatan dan dokumen pengiriman",
+        "weight": 20,
+        "safety": false
+      },
+      {
+        "id": "driver_distribusi-c3",
+        "name": "Penanganan masalah dan komunikasi",
+        "weight": 10,
+        "safety": false
+      },
+      {
+        "id": "driver_distribusi-c4",
+        "name": "Kedisiplinan operasional",
+        "weight": 10,
+        "safety": false
+      }
+    ],
+    "questions": [
+      {
+        "id": "driver_distribusi-q1",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c0",
+        "text": "Apa saja yang kamu periksa sebelum membawa kendaraan berisi barang?",
+        "purpose": "Menilai keselamatan berkendara melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Langsung berangkat tanpa pemeriksaan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa rem, ban, lampu, cairan, dokumen dan muatan sesuai checklist.",
+          "Memeriksa rem, ban, lampu, cairan, dokumen dan muatan sesuai checklist.",
+          "Menjelaskan urutan memeriksa rem, ban, lampu, cairan, dokumen dan muatan sesuai checklist, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa rem, ban, lampu, cairan, dokumen dan muatan sesuai checklist",
+        "risk": "Langsung berangkat tanpa pemeriksaan",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "driver_distribusi-q2",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c0",
+        "text": "Rem terasa bermasalah di perjalanan. Apa keputusanmu?",
+        "purpose": "Menilai keselamatan berkendara melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Meneruskan pengiriman dengan rem bermasalah",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengendalikan kendaraan sesuai pelatihan, mencari tempat aman dan meminta bantuan teknis.",
+          "Mengendalikan kendaraan sesuai pelatihan, mencari tempat aman dan meminta bantuan teknis.",
+          "Menjelaskan urutan mengendalikan kendaraan sesuai pelatihan, mencari tempat aman dan meminta bantuan teknis, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengendalikan kendaraan sesuai pelatihan, mencari tempat aman dan meminta bantuan teknis",
+        "risk": "Meneruskan pengiriman dengan rem bermasalah",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "driver_distribusi-q3",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c0",
+        "text": "Kamu mengantuk tetapi barang harus segera sampai. Apa tindakanmu?",
+        "purpose": "Menilai keselamatan berkendara melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Memaksakan mengemudi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: berhenti di lokasi aman dan mengoordinasikan istirahat atau pengganti.",
+          "Berhenti di lokasi aman dan mengoordinasikan istirahat atau pengganti.",
+          "Menjelaskan urutan berhenti di lokasi aman dan mengoordinasikan istirahat atau pengganti, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Berhenti di lokasi aman dan mengoordinasikan istirahat atau pengganti",
+        "risk": "Memaksakan mengemudi",
+        "required": true,
+        "type": "dinilai",
+        "critical": true
+      },
+      {
+        "id": "driver_distribusi-q4",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c2",
+        "text": "Jumlah paket berbeda dari surat jalan. Bagaimana menanganinya?",
+        "purpose": "Menilai muatan dan dokumen pengiriman melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengubah surat jalan tanpa verifikasi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa ulang dan mencatat selisih dengan cabang sebelum pengesahan.",
+          "Memeriksa ulang dan mencatat selisih dengan cabang sebelum pengesahan.",
+          "Menjelaskan urutan memeriksa ulang dan mencatat selisih dengan cabang sebelum pengesahan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa ulang dan mencatat selisih dengan cabang sebelum pengesahan",
+        "risk": "Mengubah surat jalan tanpa verifikasi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-q5",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c1",
+        "text": "Jalan saran GPS tidak aman untuk truk. Bagaimana menentukan rute?",
+        "purpose": "Menilai penguasaan kendaraan dan rute melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengikuti GPS tanpa memeriksa kondisi",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa batas kendaraan dan mengonfirmasi rute alternatif yang aman.",
+          "Memeriksa batas kendaraan dan mengonfirmasi rute alternatif yang aman.",
+          "Menjelaskan urutan memeriksa batas kendaraan dan mengonfirmasi rute alternatif yang aman, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa batas kendaraan dan mengonfirmasi rute alternatif yang aman",
+        "risk": "Mengikuti GPS tanpa memeriksa kondisi",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-q6",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c2",
+        "text": "Bagaimana memastikan muatan tidak bergeser?",
+        "purpose": "Menilai muatan dan dokumen pengiriman melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Menganggap muatan berat pasti aman",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa distribusi beban, pengikat dan pengamanan sesuai kendaraan.",
+          "Memeriksa distribusi beban, pengikat dan pengamanan sesuai kendaraan.",
+          "Menjelaskan urutan memeriksa distribusi beban, pengikat dan pengamanan sesuai kendaraan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa distribusi beban, pengikat dan pengamanan sesuai kendaraan",
+        "risk": "Menganggap muatan berat pasti aman",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-q7",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c3",
+        "text": "Kendaraan mogok. Bagaimana urutan tindakanmu?",
+        "purpose": "Menilai penanganan masalah dan komunikasi melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Memperbaiki di jalur aktif tanpa pengamanan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengamankan lokasi dan orang, memberi tanda aman lalu melapor dan meminta bantuan.",
+          "Mengamankan lokasi dan orang, memberi tanda aman lalu melapor dan meminta bantuan.",
+          "Menjelaskan urutan mengamankan lokasi dan orang, memberi tanda aman lalu melapor dan meminta bantuan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengamankan lokasi dan orang, memberi tanda aman lalu melapor dan meminta bantuan",
+        "risk": "Memperbaiki di jalur aktif tanpa pengamanan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-q8",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c1",
+        "text": "Kendaraan yang akan dipakai berbeda dari yang biasa kamu bawa. Apa persiapanmu?",
+        "purpose": "Menilai penguasaan kendaraan dan rute melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Langsung membawa tanpa mengenali kendaraan",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: memeriksa kewenangan sim dan familiarisasi terawasi sebelum penugasan.",
+          "Memeriksa kewenangan SIM dan familiarisasi terawasi sebelum penugasan.",
+          "Menjelaskan urutan memeriksa kewenangan sim dan familiarisasi terawasi sebelum penugasan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Memeriksa kewenangan SIM dan familiarisasi terawasi sebelum penugasan",
+        "risk": "Langsung membawa tanpa mengenali kendaraan",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-q9",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c4",
+        "text": "Kenek memberi tahu barang rusak saat waktu pengiriman mepet. Apa tindakanmu?",
+        "purpose": "Menilai kedisiplinan operasional melalui langkah yang dapat diamati.",
+        "probe": "Apa yang kamu lakukan lebih dulu? Kepada siapa kamu melapor? Apa bukti hasilnya?",
+        "rubric": [
+          "Mengabaikan laporan agar cepat sampai",
+          "Mengenali sebagian masalah, tetapi belum menjelaskan langkah dasar: mengatur berhenti aman, mencatat dan berkoordinasi tanpa menutupi kerusakan.",
+          "Mengatur berhenti aman, mencatat dan berkoordinasi tanpa menutupi kerusakan.",
+          "Menjelaskan urutan mengatur berhenti aman, mencatat dan berkoordinasi tanpa menutupi kerusakan, alasan pemilihan langkah, pengecekan hasil dan kapan berkoordinasi."
+        ],
+        "good": "Mengatur berhenti aman, mencatat dan berkoordinasi tanpa menutupi kerusakan",
+        "risk": "Mengabaikan laporan agar cepat sampai",
+        "required": true,
+        "type": "dinilai",
+        "critical": false
+      },
+      {
+        "id": "driver_distribusi-info",
+        "position": "driver_distribusi",
+        "category": "driver_distribusi-c0",
+        "text": "Ceritakan pengalaman yang relevan, termasuk kegiatan rumah, sekolah atau kerja informal. Kendaraan dan rute yang dikenal jika melamar driver.",
+        "purpose": "Informasi latar belakang; tidak dinilai.",
+        "probe": "",
+        "rubric": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "good": "",
+        "risk": "",
+        "required": false,
+        "type": "informasi",
+        "critical": false
+      }
+    ],
+    "interviewWeight": 40,
+    "practiceRequired": true,
+    "threshold": 75,
+    "coaching": 65,
+    "safetyMinimum": 3,
+    "vehicle": "",
+    "license": "",
+    "policy": "Perlu Verifikasi HRD/Pusat. Isi kebijakan posisi/cabang, komponen tetap dan variabel, jadwal, benefit, serta administrasi yang sudah dikonfirmasi. Estimasi bukan jaminan pendapatan.",
+    "requirements": [
+      {
+        "id": "identity",
+        "label": "Identitas dan dokumen relevan sudah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "essential",
+        "label": "Tuntutan esensial pekerjaan dapat dijalankan secara aman (catat dukungan yang relevan, tanpa diagnosis)",
+        "allowNA": false
+      },
+      {
+        "id": "procedure",
+        "label": "Prosedur keselamatan dasar telah diverifikasi",
+        "allowNA": false
+      },
+      {
+        "id": "license",
+        "label": "SIM masih berlaku dan sesuai kendaraan operasional yang dikonfigurasi HRD",
+        "allowNA": false
+      }
+    ],
+    "practice": {
+      "instructions": "Penguji berkualifikasi memverifikasi SIM dan kelayakan kendaraan sebelum tes. Mulai pemeriksaan statis; manuver dan parkir hanya di area tertutup yang disetujui, dengan supervisi langsung. Hentikan jika tidak aman.",
+      "materials": "Paket dummy, daftar simulasi, alat tulis dan checklist. Driver: kendaraan layak dan area uji yang disetujui; penguji kompeten.",
+      "checks": [
+        "Melakukan pemeriksaan sebelum jalan",
+        "Mengamati lingkungan dan memberi isyarat",
+        "Manuver serta parkir aman dengan supervisi",
+        "Menghentikan tes saat ada risiko dan berkoordinasi"
+      ],
+      "rubric": [
+        "Langkah tidak aman atau hasil tidak memadai.",
+        "Sebagian langkah benar, masih memerlukan arahan dasar.",
+        "Seluruh langkah dasar benar dan aman dengan bukti hasil.",
+        "Langkah benar, berurutan, memeriksa hasil dan mengoordinasikan risiko."
+      ]
+    }
+  }
+};
+const LEGACY=[
+  "Berikut adalah ketentuan absensi dan keterlambatan di Baraka Express: (1) Keterlambatan dikenakan potong Rp 5.000 per 5 menit telat, (2) Diberikan kesempatan/toleransi keterlambatan maksimal 2 kali per bulan, (3) Lupa absen pulang akan dipotong setengah Uang Makan (UM) pada hari berikutnya. Apakah kamu siap mematuhi peraturan kedisiplinan ini?",
+  "Berikut benefit dan hak karyawan di Baraka Express: (1) Ditanggung BPJS Kesehatan Kelas 3, (2) BPJS Ketenagakerjaan (JHT) diikutkan dalam antrian setelah 3 bulan masa kerja, (3) Jatah cuti 2 hari/bulan setelah 3 bulan bekerja, (4) UM pada tanggal merah masuk kerja dikali 1,5x (misal UM normal Rp 60.000 jadi Rp 90.000). Apakah ketentuan benefit ini sudah jelas dan sesuai bagi kamu?",
+  "Untuk masa MT Staff ini, komponen gajinya begini ya: gaji pokok Rp850.000, subsidi area Rp50.000 — itu komponen tetap per bulan. Lalu ada uang makan Rp45.000/hari dan bonus harian Rp20.000/hari, yang dihitung sesuai jumlah hari kamu masuk kerja. Kalau masuk penuh sekitar 25 hari kerja, totalnya bisa sekitar Rp2,5 juta per bulan. Setelah dengar breakdown-nya, menurut kamu apakah itu cukup untuk kebutuhan kamu saat ini? Apa pertimbanganmu?",
+  "Jika di akhir hari ada selisih kas sebesar Rp 50.000, apa langkah yang akan kamu ambil?",
+  "Menurut kamu, take home pay Rp 2,2–2,5 juta per bulan itu cukup untuk kebutuhan kamu sekarang?",
+  "Menurut kamu, take home pay Rp 2,8–3,2 juta per bulan itu cukup untuk kebutuhan kamu sekarang?"
+];
+'use strict';
+const clone=x=>JSON.parse(JSON.stringify(x)), uid=()=>crypto.randomUUID(), now=()=>new Date().toISOString();
+const safeId=x=>typeof x==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(x)&&!['__proto__','constructor','prototype'].includes(x);
+const validScore=x=>Number.isInteger(x)&&x>=1&&x<=4;
+function validateTemplate(t){
+ if(!t||!DEFAULTS[t.id]||typeof t.label!=='string'||!Number.isInteger(t.version)||t.version<1)throw Error('Identitas template tidak valid');
+ if(!Array.isArray(t.categories)||!t.categories.length||t.categories.some(c=>!safeId(c.id)||typeof c.name!=='string'||!c.name.trim()||!Number.isFinite(c.weight)||c.weight<=0||typeof c.safety!=='boolean')||Math.abs(t.categories.reduce((s,c)=>s+c.weight,0)-100)>0.000001)throw Error('Bobot kompetensi harus positif dan berjumlah tepat 100%');
+ if(new Set(t.categories.map(c=>c.id)).size!==t.categories.length)throw Error('ID kategori duplikat');
+ if(!Array.isArray(t.questions)||!t.questions.length||new Set(t.questions.map(q=>q.id)).size!==t.questions.length)throw Error('ID pertanyaan kosong/duplikat');
+ for(const q of t.questions){if(!safeId(q.id)||q.position!==t.id||!['dinilai','administrasi','informasi','persyaratan wajib'].includes(q.type)||typeof q.text!=='string'||!q.text.trim()||!t.categories.some(c=>c.id===q.category)||typeof q.required!=='boolean'||typeof q.critical!=='boolean')throw Error('Pertanyaan atau kategori tidak valid');if(!Array.isArray(q.rubric)||q.rubric.length!==4||q.rubric.some(x=>typeof x!=='string')||(q.type==='dinilai'&&q.rubric.some(x=>!x.trim())))throw Error('Rubrik 1–4 wajib lengkap');for(const k of ['purpose','probe','good','risk'])if(typeof q[k]!=='string')throw Error('Metadata pertanyaan tidak valid');if(q.critical&&(!q.required||q.type!=='dinilai'))throw Error('Item keselamatan kritis harus wajib dan dinilai');}
+ for(const c of t.categories)if(!t.questions.some(q=>q.category===c.id&&q.type==='dinilai'&&q.required))throw Error('Setiap kompetensi harus memiliki pertanyaan wajib dinilai');
+ if(!Number.isFinite(t.interviewWeight)||t.interviewWeight<0||t.interviewWeight>100||!Number.isFinite(t.threshold)||!Number.isFinite(t.coaching)||t.coaching<0||t.threshold>100||t.coaching>t.threshold||!validScore(t.safetyMinimum)||typeof t.practiceRequired!=='boolean')throw Error('Konfigurasi skor tidak valid');
+ for(const k of ['vehicle','license','policy'])if(typeof t[k]!=='string')throw Error('Konfigurasi pekerjaan tidak valid');
+ if(!Array.isArray(t.requirements)||!t.requirements.length||new Set(t.requirements.map(r=>r.id)).size!==t.requirements.length||t.requirements.some(r=>!safeId(r.id)||typeof r.label!=='string'||!r.label.trim()||typeof r.allowNA!=='boolean'))throw Error('Persyaratan tidak valid');
+ for(const required of DEFAULTS[t.id].requirements)if(!t.requirements.some(r=>r.id===required.id&&!r.allowNA))throw Error('Persyaratan inti tidak boleh dihapus atau dibuat N/A');
+ if(!t.practice||typeof t.practice.instructions!=='string'||typeof t.practice.materials!=='string'||!Array.isArray(t.practice.checks)||!t.practice.checks.length||t.practice.checks.some(x=>typeof x!=='string'||!x.trim())||!Array.isArray(t.practice.rubric)||t.practice.rubric.length!==4||t.practice.rubric.some(x=>typeof x!=='string'||!x.trim()))throw Error('Tes praktik tidak valid');return true;
+}
+function validateSession(s){
+ if(!s||!safeId(s.id)||!s.template||s.position!==s.template.id)throw Error('Sesi tidak valid');validateTemplate(s.template);
+ for(const k of ['created','updated','name','branch','date','interviewer','contact','experience','education','strengths','development','findings','decision','decisionReason'])if(typeof s[k]!=='string'||s[k].length>100000)throw Error('Data kandidat tidak valid');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(s.date)||!Number.isFinite(Date.parse(s.date)))throw Error('Tanggal tidak valid');
+ if(typeof s.unresolvedFinding!=='boolean')throw Error('Status temuan tidak valid');
+ if(!s.answers||!s.gates||!s.practice||!s.benefit)throw Error('Struktur asesmen tidak lengkap');
+ for(const [id,a] of Object.entries(s.answers)){let q=s.template.questions.find(q=>q.id===id);if(!q||!a||typeof a.note!=='string'||typeof a.naReason!=='string'||!(a.score===null||validScore(a.score)||a.score==='NA'&&!q.required&&!q.critical&&a.naReason.trim()))throw Error('Jawaban/nilai tidak valid');}
+ for(const [id,g] of Object.entries(s.gates))if(!s.template.requirements.some(r=>r.id===id)||!['','Memenuhi','Belum diverifikasi','Belum memenuhi','Tidak berlaku'].includes(g.status)||typeof g.note!=='string'||(g.status==='Tidak berlaku'&&(!s.template.requirements.find(r=>r.id===id).allowNA||!g.note.trim())))throw Error('Status persyaratan tidak valid');
+ const p=s.practice;if(!Array.isArray(p.scores)||p.scores.length!==s.template.practice.checks.length||p.scores.some(x=>x!==null&&!validScore(x))||typeof p.done!=='boolean'||typeof p.supervised!=='boolean'||typeof p.note!=='string'||typeof p.documentation!=='string'||typeof p.examiner!=='string')throw Error('Hasil praktik tidak valid');
+ for(const k of ['explained','understood','questions','objections'])if(typeof s.benefit[k]!=='boolean')throw Error('Konfirmasi benefit tidak valid');if(typeof s.benefit.note!=='string')throw Error('Catatan benefit tidak valid');return true;
+}
+// Incomplete answers never become zero. Category means use only scored items;
+// a required missing item or empty category prevents a final interview total.
+function evaluate(s){
+ const t=s.template, qs=t.questions.filter(q=>q.type==='dinilai'), a=s.answers;
+ const missing=qs.filter(q=>q.required&&!validScore(a[q.id]?.score));
+ const infoMissing=t.questions.some(q=>q.required&&q.type!=='dinilai'&&!a[q.id]?.note?.trim());
+ const cats=t.categories.map(c=>{const values=qs.filter(q=>q.category===c.id).map(q=>a[q.id]?.score).filter(validScore);const avg=values.length?values.reduce((a,b)=>a+b,0)/values.length:null;return {...c,avg,contribution:avg===null?null:avg/4*c.weight};});
+ const interview=missing.length||infoMissing||cats.some(c=>c.avg===null)?null:cats.reduce((s,c)=>s+c.contribution,0);
+ const p=s.practice, practiceDone=p.done&&p.supervised&&p.examiner.trim()&&p.scores.every(validScore)&&!!p.note.trim()&&!!p.documentation.trim();
+ const practice=practiceDone?p.scores.reduce((a,b)=>a+b,0)/p.scores.length/4*100:null;
+ const practiceNeeded=t.practiceRequired||t.interviewWeight<100;
+ const unresolved=t.requirements.filter(r=>!['Memenuhi',...(r.allowNA?['Tidak berlaku']:[])].includes(s.gates[r.id]?.status));
+ const failed=t.requirements.some(r=>s.gates[r.id]?.status==='Belum memenuhi');
+ if(s.position==='driver_distribusi'&&(!t.vehicle.trim()||!t.license.trim())&&!unresolved.some(r=>r.id==='license'))unresolved.push({id:'license'});
+ const identity=!!(s.name.trim()&&s.branch.trim()&&s.date&&s.interviewer.trim());
+ const critical=s.unresolvedFinding||qs.some(q=>q.critical&&validScore(a[q.id]?.score)&&a[q.id].score<t.safetyMinimum)||cats.some(c=>c.safety&&c.avg!==null&&c.avg<t.safetyMinimum)||(practiceDone&&p.scores.some(v=>v<t.safetyMinimum));
+ const complete=identity&&interview!==null&&(!practiceNeeded||practiceDone)&&!unresolved.length;
+ const total=interview===null||(practiceNeeded&&!practiceDone)?null:interview*t.interviewWeight/100+(practice??0)*(100-t.interviewWeight)/100;
+ let status='Belum selesai dinilai', reason='Lengkapi identitas, semua item wajib, dan verifikasi persyaratan. Skor parsial bukan keputusan.';
+ if(failed){status='Belum memenuhi persyaratan wajib';reason='Ada persyaratan yang belum memenuhi. Verifikasi bukti dan tindak lanjut HRD; skor tinggi tidak menutup persyaratan.';}
+ else if(identity&&interview!==null&&!unresolved.length&&practiceNeeded&&!practiceDone){status='Lanjut tes praktik';reason='Interview dan verifikasi sudah lengkap; tes praktik terawasi serta dokumentasi masih diperlukan.';}
+ else if(complete){if(critical){status='Perlu pendalaman atau asesmen ulang';reason='Ada indikator keselamatan atau praktik di bawah batas. Lakukan pendalaman, pembinaan atau asesmen ulang; bukan penolakan otomatis.';}else if(total>=t.threshold){status='Direkomendasikan untuk tahap berikutnya';reason='Asesmen lengkap, persyaratan terverifikasi dan skor memenuhi ambang internal. Keputusan tetap pada pihak berwenang.';}else if(total>=t.coaching){status='Direkomendasikan dengan catatan pembinaan';reason='Skor berada pada rentang pembinaan. Tinjau kompetensi terendah dan bukti sebelum keputusan HRD.';}else{status='Belum direkomendasikan';reason='Skor lengkap berada di bawah rentang pembinaan internal. HRD dapat menetapkan pendalaman berdasarkan bukti.';}}
+ return {cats,interview,practice,total,complete,status,reason,critical,missing:missing.length,answered:qs.filter(q=>validScore(a[q.id]?.score)).length,count:qs.length,unresolved:unresolved.length};
+}
+function newSession(t){return {id:uid(),position:t.id,template:clone(t),created:now(),updated:now(),name:'',branch:'',date:new Date().toLocaleDateString('en-CA'),interviewer:'',contact:'',experience:'',education:'',unresolvedFinding:false,strengths:'',development:'',findings:'',decision:'',decisionReason:'',answers:{},gates:{},practice:{scores:t.practice.checks.map(()=>null),done:false,supervised:false,note:'',documentation:'',examiner:''},benefit:{explained:false,understood:false,questions:false,objections:false,note:''}};}
+let state={schema:1,templates:clone(DEFAULTS),sessions:[]},db=null,current=null,step=0,view='Dashboard',editorKey='mt_staff',editor=null,storageOK=false;
+const $=s=>document.querySelector(s), app=()=>$('#app');
+function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
+function add(parent,...nodes){nodes.forEach(n=>parent.append(n));return parent;}
+function button(text,fn,cls=''){const b=el('button',text,cls);b.type='button';b.addEventListener('click',async()=>{try{await fn();}catch(e){message(e.message,true);}});return b;}
+function message(text,bad=false){$('#notice').textContent=text;$('#notice').className=bad?'notice error':'notice';}
+function field(parent,label,value,fn,type='text',options){const wrap=el('label',undefined,'field');wrap.append(el('span',label));let input=el(options?'select':type==='textarea'?'textarea':'input');if(options){for(const [v,n] of options) {const o=el('option',n);o.value=v;input.append(o);}}else if(type!=='textarea')input.type=type;input.setAttribute('aria-label',label);input.value=value??'';if(type==='number'){input.min='0';input.max='100';input.step='any';}input.addEventListener(options?'change':'input',()=>{fn(type==='number'?Number(input.value):input.value);});wrap.append(input);parent.append(wrap);return input;}
+function check(parent,label,value,fn){const l=el('label',undefined,'check');const c=el('input');c.type='checkbox';c.checked=value;c.addEventListener('change',()=>fn(c.checked));add(l,c,el('span',label));parent.append(l);}
+function card(parent,title){const c=el('section',undefined,'card');if(title)c.append(el('h2',title));parent.append(c);return c;}
+function fmt(v){return v===null||v===undefined?'—':v.toFixed(1);}
+function validateState(x){if(!x||x.schema!==1||!x.templates||!Array.isArray(x.sessions)||x.sessions.length>10000)throw Error('Versi/struktur backup tidak didukung');if(Object.keys(x.templates).length!==7)throw Error('Backup harus berisi tujuh template');for(const k of Object.keys(DEFAULTS)){if(x.templates[k]?.id!==k)throw Error('Template posisi hilang');validateTemplate(x.templates[k]);}if(new Set(x.sessions.map(s=>s.id)).size!==x.sessions.length)throw Error('ID sesi duplikat');x.sessions.forEach(validateSession);return true;}
+// One IndexedDB transaction stores the complete validated state atomically.
+// A rejected write leaves data in memory and shows an explicit unsaved warning.
+async function writeState(value=state){validateState(value);if(!db)throw Error('Database tidak tersedia. Ekspor JSON sebelum menutup halaman.');const payload=clone(value);await new Promise((resolve,reject)=>{const tx=db.transaction('data','readwrite');tx.objectStore('data').put(payload,'state');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Penyimpanan dibatalkan'));});storageOK=pendingSaves<=1;$('#saveStatus').textContent=storageOK?'Tersimpan di perangkat • '+new Date().toLocaleTimeString('id-ID'):'Menyimpan…';}
+let pendingSaves=0,saveQueue=Promise.resolve();function save(){const payload=clone(state);pendingSaves++;saveQueue=saveQueue.catch(()=>{}).then(()=>writeState(payload)).finally(()=>{pendingSaves--;});saveQueue.catch(e=>{storageOK=false;$('#saveStatus').textContent='BELUM TERSIMPAN — ekspor JSON';message(e.message,true);});return saveQueue;}
+function touch(){if(current){current.updated=now();delete current.finalizedAt;}storageOK=false;$('#saveStatus').textContent='Menyimpan…';save();}
+function download(name,text,type){const a=el('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+const stamp=()=>now().replace(/[:.]/g,'-');
+function exportJSON(){download('BARAKA-backup-'+stamp()+'.json',JSON.stringify(state,null,2),'application/json');}
+function exportCSV(){const rows=[['ID','Nama','Posisi','Cabang','Tanggal','Interview','Praktik','Akhir','Status','Keputusan','Alasan HRD'],...state.sessions.map(s=>{const r=evaluate(s);return [s.id,s.name,s.template.label,s.branch,s.date,fmt(r.interview),fmt(r.practice),fmt(r.total),r.status,s.decision,s.decisionReason];})];download('BARAKA-rekap-'+stamp()+'.csv','\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/^[=+@\-\t\r]/,"'$&").replaceAll('"','""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8');}
+async function importJSON(file){if(!file)return;if(file.size>30000000)throw Error('Backup melebihi batas 30 MB');const incoming=JSON.parse(await file.text());validateState(incoming);const merged=clone(state);let added=0,skipped=0;for(const s of incoming.sessions){if(merged.sessions.some(x=>x.id===s.id)){skipped++;continue;}merged.sessions.push(s);added++;}if(!confirm(`Impor ${added} sesi baru; ${skipped} ID yang sudah ada dilewati. Template aktif akan diganti dari backup. Lanjutkan?`))return;merged.templates=incoming.templates;await saveQueue.catch(()=>{});await writeState(merged);state=merged;current=null;editor=null;message(`Impor berhasil: ${added} ditambah, ${skipped} dilewati. Sesi yang sudah ada tidak ditimpa.`);navigate('Riwayat Kandidat');}
+function navigate(name){view=name;if(name!=='Laporan')$('#report').replaceChildren();render();}
+function render(){app().replaceChildren();document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent===view));$('#pageTitle').textContent=view;switch(view){case'Dashboard':dashboard();break;case'Interview Baru':interview();break;case'Riwayat Kandidat':history();break;case'Bank Pertanyaan':editTemplate(false);break;case'Pengaturan Penilaian':editTemplate(true);break;case'Rekap/Laporan':history(true);break;case'Laporan':report();break;}}
+function dashboard(){const results=state.sessions.map(evaluate),grid=el('div',undefined,'metrics');app().append(grid);for(const [label,n] of [['Total kandidat',results.length],['Asesmen lengkap',results.filter(r=>r.complete).length],['Belum lengkap',results.filter(r=>!r.complete).length],['Direkomendasikan',results.filter(r=>r.complete&&r.status.startsWith('Direkomendasikan')).length],['Perlu pendalaman',results.filter(r=>r.critical).length]]){const c=card(grid,label);c.append(el('strong',n));}const c=card(app(),'Distribusi kandidat');for(const [key,t] of Object.entries(state.templates)){const list=state.sessions.filter(s=>s.position===key),scores=list.map(evaluate).filter(r=>r.complete).map(r=>r.total);c.append(el('p',`${t.label} · ${list.length} kandidat · rata-rata lengkap ${scores.length?fmt(scores.reduce((a,b)=>a+b,0)/scores.length):'—'}`));}const recent=card(app(),'Aktivitas terbaru');if(!state.sessions.length)recent.append(el('p','Belum ada kandidat. Mulai interview pertama; angka hanya berasal dari data perangkat ini.'));for(const s of [...state.sessions].sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,5))recent.append(button(`${s.name||'Draft tanpa nama'} · ${s.template.label} · ${new Date(s.updated).toLocaleString('id-ID')}`,()=>openSession(s.id)));app().append(button('Mulai interview',()=>{current=null;navigate('Interview Baru');},'primary'));}
+function openSession(id){current=state.sessions.find(s=>s.id===id);step=0;navigate('Interview Baru');}
+function interview(){if(!current){const c=card(app(),'Pilih posisi untuk sesi baru');let key='mt_staff';field(c,'Posisi',key,v=>key=v,'text',Object.entries(state.templates).map(([k,t])=>[k,t.label]));c.append(el('p','Setiap sesi menyimpan salinan pertanyaan, rubrik, bobot, dan kebijakan saat dibuat. Posisi sesi tidak diubah setelah pembuatan.'));c.append(button('Buat sesi interview',async()=>{current=newSession(state.templates[key]);state.sessions.push(current);step=0;await save();render();},'primary'));return;}
+ const s=current,r=evaluate(s),bar=card(app(),`${s.name||'Kandidat baru'} · ${s.template.label}`);bar.append(button('Buat interview lain',()=>{current=null;render();}));bar.append(el('p',`ID ${s.id} • template v${s.template.version}`));bar.append(el('p',`${r.answered}/${r.count} pertanyaan dinilai • ${r.status}`));const progress=el('progress');progress.max=r.count;progress.value=r.answered;bar.append(progress);const steps=['1 Identitas','2 Persyaratan','3 Interview','4 Praktik','5 Review'];const tabs=el('div',undefined,'actions');steps.forEach((n,i)=>tabs.append(button(n,()=>{step=i;render();},step===i?'primary':'')));bar.append(tabs);
+ if(step===0){const c=card(app(),'Identitas kandidat');for(const [k,n,type] of [['name','Nama kandidat *','text'],['branch','Cabang/lokasi *','text'],['date','Tanggal *','date'],['interviewer','Interviewer *','text'],['contact','Kontak (opsional)','text'],['education','Pendidikan (informasi administratif)','text'],['experience','Pengalaman relevan, termasuk informal','textarea']])field(c,n,s[k],v=>{s[k]=v;touch();},type);}
+ if(step===1){const c=card(app(),'Verifikasi persyaratan • tidak masuk skor');if(s.position==='driver_distribusi')c.append(el('p',`Kendaraan: ${s.template.vehicle||'BELUM DIKONFIGURASI'} • SIM: ${s.template.license||'BELUM DIKONFIGURASI'}. HRD wajib menentukan kecocokan berdasarkan aturan yang berlaku.`));for(const req of s.template.requirements){const box=card(c,req.label),g=s.gates[req.id]??={status:'',note:''};field(box,'Status',g.status,v=>{if(req.id==='license'&&v==='Memenuhi'&&(!s.template.vehicle.trim()||!s.template.license.trim())){message('Konfigurasi kendaraan/SIM wajib diisi pada snapshot sesi di bawah.',true);render();return;}g.status=v;touch();},'text',[['','Belum diverifikasi'],['Memenuhi','Memenuhi'],['Belum diverifikasi','Belum diverifikasi'],['Belum memenuhi','Belum memenuhi'],...(req.allowNA?[['Tidak berlaku','Tidak berlaku']]:[])]);field(box,'Bukti verifikasi / tindak lanjut',g.note,v=>{g.note=v;touch();},'textarea');}
+ if(s.position==='driver_distribusi'){field(c,'Jenis kendaraan aktual sesi',s.template.vehicle,v=>{s.template.vehicle=v;if(s.gates.license)s.gates.license.status='Belum diverifikasi';touch();});field(c,'Klasifikasi SIM yang sudah dikonfirmasi HRD',s.template.license,v=>{s.template.license=v;if(s.gates.license)s.gates.license.status='Belum diverifikasi';touch();});}
+ const b=card(app(),'Konfirmasi Informasi Pekerjaan & Ketentuan Perusahaan');b.append(el('p',s.template.policy));b.append(el('p','Perlu Verifikasi HRD/Pusat. Pertanyaan, keberatan, gaji dan benefit tidak memengaruhi skor.'));for(const [k,n] of [['explained','Sudah dijelaskan'],['understood','Kandidat sudah memahami'],['questions','Kandidat mempunyai pertanyaan'],['objections','Ada hal yang perlu diklarifikasi']])check(b,n,s.benefit[k],v=>{s.benefit[k]=v;touch();});field(b,'Catatan HRD',s.benefit.note,v=>{s.benefit.note=v;touch();},'textarea');}
+ if(step===2){let selected=Number(s.questionIndex)||0;selected=Math.min(selected,s.template.questions.length-1);const q=s.template.questions[selected],a=s.answers[q.id]??={score:null,note:'',naReason:''};const c=card(app(),`Pertanyaan ${selected+1}/${s.template.questions.length} · ${q.type}${q.required?' · wajib':''}`);c.append(el('h3',q.text));c.append(el('p',q.purpose));c.append(el('p','Pendalaman: '+q.probe));const details=el('details');details.append(el('summary','Buka rubrik dan indikator'));q.rubric.forEach((x,i)=>details.append(el('p',`${i+1}. ${x}`)));add(details,el('p','Indikator baik: '+q.good),el('p','Risiko: '+q.risk));c.append(details);if(q.type==='dinilai'){scoreButtons(c,a.score,v=>{a.score=v;touch();render();});if(!q.required&&!q.critical){field(c,'Alasan N/A (hanya item opsional; dikeluarkan dari rata-rata)',a.naReason,v=>{a.naReason=v;touch();});c.append(button('Tandai N/A',()=>{if(!a.naReason.trim())throw Error('Isi alasan N/A');a.score='NA';touch();render();}));}}field(c,'Catatan bukti jawaban kandidat'+(q.required&&q.type!=='dinilai'?' *':''),a.note,v=>{a.note=v;touch();},'textarea');const controls=el('div',undefined,'actions');if(selected>0)controls.append(button('Pertanyaan sebelumnya',()=>{s.questionIndex=selected-1;render();}));if(selected<s.template.questions.length-1)controls.append(button('Pertanyaan berikutnya',()=>{s.questionIndex=selected+1;render();},'primary'));c.append(controls);field(c,'Lompat ke pertanyaan',String(selected),v=>{s.questionIndex=Number(v);render();},'text',s.template.questions.map((q,i)=>[String(i),`${i+1}. ${q.text.slice(0,65)}`]));}
+ if(step===3){const p=s.practice,c=card(app(),'Tes praktik terintegrasi');add(c,el('p',s.template.practice.instructions),el('p','Alat/bahan: '+s.template.practice.materials),el('p','Hanya dengan penguji kompeten. Hentikan bila tidak aman; jangan menguji dengan beban berisiko atau di jalan umum.'));field(c,'Nama penguji kompeten *',p.examiner,v=>{p.examiner=v;touch();});check(c,'Dilaksanakan dengan supervisi penguji kompeten',p.supervised,v=>{p.supervised=v;touch();});s.template.practice.checks.forEach((text,i)=>{const box=card(c,text);scoreButtons(box,p.scores[i],v=>{p.scores[i]=v;touch();render();});const d=el('details');d.append(el('summary','Rubrik pengamatan'));s.template.practice.rubric.forEach((x,j)=>d.append(el('p',`${j+1}. ${text}: ${x}`)));box.append(d);});field(c,'Catatan bukti penguji *',p.note,v=>{p.note=v;touch();},'textarea');field(c,'Dokumentasi hasil * (hasil hitung, temuan, referensi berkas aman; tanpa lampiran sensitif)',p.documentation,v=>{p.documentation=v;touch();},'textarea');check(c,'Tes telah selesai',p.done,v=>{p.done=v;touch();render();});c.append(el('p',`Skor praktik: ${fmt(evaluate(s).practice)}. Lengkap hanya setelah seluruh nilai, penguji, supervisi, catatan dan dokumentasi terisi.`));}
+ if(step===4){const c=card(app(),'Review asesmen');summary(c,s);check(c,'Temuan kritis belum terselesaikan — perlu pendalaman/asesmen ulang',s.unresolvedFinding,v=>{s.unresolvedFinding=v;touch();render();});for(const [k,n] of [['strengths','Kekuatan kandidat (berdasarkan bukti)'],['development','Kompetensi yang perlu dikembangkan'],['findings','Catatan dan temuan kritis'],['decisionReason','Alasan keputusan HRD']])field(c,n,s[k],v=>{s[k]=v;touch();},'textarea');field(c,'Keputusan pihak berwenang',s.decision,v=>{s.decision=v;touch();},'text',[['','Belum diputuskan'],['Pendalaman','Pendalaman / asesmen ulang'],['Tahap berikutnya','Lanjut tahap berikutnya'],['Dengan pembinaan','Lanjut dengan pembinaan'],['Belum direkomendasikan','Belum direkomendasikan']]);c.append(button('Simpan keputusan final HRD',async()=>{if(!evaluate(s).complete)throw Error('Asesmen/persyaratan belum lengkap; keputusan belum dapat difinalisasi');if(!s.decision||!s.decisionReason.trim())throw Error('Keputusan dan alasan wajib diisi');s.updated=now();s.finalizedAt=now();await save();message('Keputusan HRD tersimpan.');}));c.append(button('Preview Laporan',()=>navigate('Laporan'),'primary'));}
+ const actions=el('div',undefined,'actions');if(step>0)actions.append(button('Kembali',()=>{step--;render();}));actions.append(button('Simpan manual',async()=>{await save();message('Draft tersimpan di perangkat. Buat backup JSON berkala.');}));if(step<4)actions.append(button('Lanjut',()=>{step++;render();},'primary'));app().append(actions);
+}
+function scoreButtons(c,value,fn){const row=el('div',undefined,'actions scores');for(let i=1;i<=4;i++){const b=button(String(i),()=>fn(i),value===i?'selected':'');b.setAttribute('aria-pressed',String(value===i));b.setAttribute('aria-label','Nilai '+i);row.append(b);}row.append(button('Hapus nilai',()=>fn(null)));c.append(row);}
+function summary(c,s){const r=evaluate(s);c.append(el('h3',r.status));c.append(el('p',r.reason));c.append(el('p',`Kelengkapan: ${r.complete?'Lengkap':'Belum Selesai'} • ${r.answered}/${r.count} dinilai • persyaratan belum memenuhi/terverifikasi ${r.unresolved}`));const table=el('table');const head=el('tr');['Kompetensi','Bobot','Rata-rata /4','Kontribusi /100'].forEach(x=>head.append(el('th',x)));table.append(head);for(const x of r.cats){const tr=el('tr');[x.name,x.weight+'%',fmt(x.avg),fmt(x.contribution)].forEach(v=>tr.append(el('td',v)));table.append(tr);}c.append(table);c.append(el('p',`Interview ${fmt(r.interview)} × ${s.template.interviewWeight}% + praktik ${fmt(r.practice)} × ${100-s.template.interviewWeight}% = ${fmt(r.total)}/100`));c.append(el('p','Kontribusi yang terlihat saat draft hanya informasi parsial. Item opsional N/A dengan alasan tidak masuk rata-rata. Konfigurasi internal belum merupakan standar tervalidasi atau standar hukum.'));}
+function history(recap=false){const c=card(app(),recap?'Rekap dan perbandingan per posisi':'Riwayat kandidat');let term='',pos='';const area=el('div');field(c,'Cari nama / cabang','',v=>{term=v;list();});field(c,'Posisi','',v=>{pos=v;list();},'text',[['','Semua posisi'],...Object.entries(state.templates).map(([k,t])=>[k,t.label])]);c.append(area);function list(){area.replaceChildren();const sessions=state.sessions.filter(s=>(!pos||s.position===pos)&&`${s.name} ${s.branch}`.toLowerCase().includes(term.toLowerCase()));if(!sessions.length)area.append(el('p','Tidak ada kandidat yang sesuai.'));if(recap&&!pos)area.append(el('p','Pilih satu posisi untuk membandingkan skor. Perbedaan versi template tetap perlu diperhatikan.'));for(const s of sessions){const r=evaluate(s),box=card(area,s.name||'Draft tanpa nama');box.append(el('p',`${s.template.label} · ${s.branch||'Lokasi belum diisi'} · v${s.template.version} · ${r.status} · ${r.complete?fmt(r.total):'Belum Selesai'}`));box.append(button('Buka interview',()=>openSession(s.id)));box.append(button('Laporan',()=>{current=s;navigate('Laporan');}));box.append(button('Hapus kandidat',async()=>{if(!confirm('Hapus sesi '+s.id+'? Ekspor backup lebih dahulu.'))return;state.sessions=state.sessions.filter(x=>x.id!==s.id);if(current?.id===s.id)current=null;await save();list();},'danger'));}}list();c.append(button('Export rekap CSV',exportCSV));}
+function editTemplate(settings){if(!editor||editor.id!==editorKey)editor=clone(state.templates[editorKey]);const t=editor,c=card(app(),settings?'Pengaturan HRD':'Editor template • perubahan tidak mengubah histori');field(c,'Posisi',editorKey,v=>{editorKey=v;editor=clone(state.templates[v]);render();},'text',Object.entries(state.templates).map(([k,t])=>[k,t.label]));c.append(el('p',`Versi aktif ${state.templates[editorKey].version}. Semua suntingan ditahan di draft editor hingga diterapkan.`));
+ if(settings){for(const cat of t.categories){const row=card(c,cat.name);field(row,'Nama kompetensi',cat.name,v=>cat.name=v);field(row,'Bobot %',cat.weight,v=>cat.weight=v,'number');check(row,'Kompetensi keselamatan',cat.safety,v=>cat.safety=v);}c.append(button('Tambah kategori',()=>{t.categories.push({id:uid(),name:'Kompetensi baru',weight:0,safety:false});render();}));for(const [k,label] of [['interviewWeight','Bobot interview % (praktik = 100 − interview)'],['threshold','Ambang tahap berikutnya'],['coaching','Ambang pembinaan'],['safetyMinimum','Batas minimal keselamatan (1–4)']])field(c,label,t[k],v=>t[k]=v,'number');check(c,'Praktik wajib',t.practiceRequired,v=>t.practiceRequired=v);field(c,'Jenis kendaraan operasional',t.vehicle,v=>t.vehicle=v);field(c,'Klasifikasi SIM sesuai kendaraan (verifikasi aturan terkini)',t.license,v=>t.license=v);const requirements=card(c,'Persyaratan wajib • terpisah dari kompetensi');for(const req of t.requirements){const box=card(requirements,req.id);field(box,'Uraian persyaratan',req.label,v=>req.label=v);if(!DEFAULTS[t.id].requirements.some(r=>r.id===req.id)){check(box,'N/A diperbolehkan hanya dengan alasan tertulis',req.allowNA,v=>req.allowNA=v);box.append(button('Hapus persyaratan tambahan',()=>{if(confirm('Hapus persyaratan tambahan dari draft template?')){t.requirements=t.requirements.filter(r=>r.id!==req.id);render();}}));}}requirements.append(button('Tambah persyaratan relevan',()=>{t.requirements.push({id:uid(),label:'Persyaratan tambahan — verifikasi relevansi dan dasar kebutuhannya',allowNA:false});render();}));field(c,'Kebijakan posisi/cabang • Perlu Verifikasi HRD/Pusat',t.policy,v=>t.policy=v,'textarea');const d=el('details');d.append(el('summary','Referensi benefit file lama • belum diverifikasi, bukan kebijakan aktif'));LEGACY.forEach(x=>d.append(el('p',x)));c.append(d);
+ }else{t.questions.forEach((q,i)=>{const box=card(c,`${i+1}. ID ${q.id}`);field(box,'Pertanyaan utama',q.text,v=>q.text=v,'textarea');field(box,'Jenis',q.type,v=>{q.type=v;if(v!=='dinilai')q.critical=false;},'text',['dinilai','administrasi','informasi','persyaratan wajib'].map(x=>[x,x]));field(box,'Kompetensi',q.category,v=>q.category=v,'text',t.categories.map(x=>[x.id,x.name]));for(const [k,n] of [['purpose','Tujuan penilaian'],['probe','Pendalaman opsional'],['good','Indikator baik'],['risk','Tindakan berisiko']])field(box,n,q[k],v=>q[k]=v,'textarea');q.rubric.forEach((r,j)=>field(box,'Rubrik '+(j+1),r,v=>q.rubric[j]=v,'textarea'));check(box,'Pertanyaan wajib',q.required,v=>q.required=v);check(box,'Keselamatan kritis (tidak boleh N/A)',q.critical,v=>q.critical=v);if(i>0)box.append(button('Naik',()=>{[t.questions[i-1],t.questions[i]]=[q,t.questions[i-1]];render();}));if(i<t.questions.length-1)box.append(button('Turun',()=>{[t.questions[i+1],t.questions[i]]=[q,t.questions[i+1]];render();}));box.append(button('Hapus pertanyaan',()=>{if(confirm('Hapus pertanyaan dari draft template?')){t.questions.splice(i,1);render();}},'danger'));});c.append(button('Tambah pertanyaan',()=>{t.questions.push({id:uid(),position:t.id,category:t.categories[0].id,text:'',purpose:'',probe:'',good:'',risk:'',rubric:['','','',''],required:false,critical:false,type:'dinilai'});render();}));}
+ const a=el('div',undefined,'actions');a.append(button('Validasi dan terapkan versi baru',async()=>{validateTemplate(t);const next=clone(t);next.version=state.templates[t.id].version+1;const candidate=clone(state);candidate.templates[t.id]=next;await saveQueue.catch(()=>{});await writeState(candidate);state.templates[t.id]=next;editor=clone(next);message('Template v'+next.version+' tersimpan. Histori tidak diubah.');render();},'primary'));a.append(button('Preview interview',()=>{validateTemplate(t);const d=card(app(),'Preview template (tidak membuat kandidat)');t.questions.forEach(q=>{d.append(el('h3',q.text));q.rubric.forEach((r,i)=>d.append(el('p',`${i+1}. ${r}`)));});}));a.append(button('Kembalikan template bawaan',async()=>{if(!confirm('Reset template posisi ini? Histori tetap utuh. Draft editor akan diganti.'))return;const next=clone(DEFAULTS[t.id]);next.version=state.templates[t.id].version+1;const candidate=clone(state);candidate.templates[t.id]=next;await saveQueue.catch(()=>{});await writeState(candidate);state.templates[t.id]=next;editor=clone(next);render();}));c.append(a);
+}
+function report(){if(!current){app().append(el('p','Pilih kandidat dari riwayat.'));return;}const s=current,r=evaluate(s),out=$('#report');out.replaceChildren();const tools=el('div',undefined,'actions');add(tools,button('Cetak / Simpan PDF',()=>window.print(),'primary'),button('Export Data',exportJSON),button('Kembali ke Interview',()=>navigate('Interview Baru')));app().append(tools);if(!r.complete)out.append(el('div','DRAFT — PENILAIAN BELUM LENGKAP','draft'));add(out,el('h1','BARAKA EXPRESS'),el('h2','FORMULIR HASIL INTERVIEW & PENILAIAN KANDIDAT'),el('p',`ID ${s.id} · template v${s.template.version} · terakhir diubah ${s.updated}`));const section=(title,text)=>{const c=card(out,title);if(text)c.append(el('p',text));return c;};section('A. Identitas Kandidat',`${s.name||'Belum diisi'} · ${s.contact||'Kontak tidak dicatat'} · Pendidikan: ${s.education||'—'} · Pengalaman: ${s.experience||'—'}`);section('B. Posisi dan Lokasi Penempatan',`${s.template.label} · ${s.branch||'—'} · ${s.date} · Interviewer ${s.interviewer||'—'}`);const gates=section('C. Hasil Verifikasi Persyaratan');s.template.requirements.forEach(q=>gates.append(el('p',`${q.label}: ${s.gates[q.id]?.status||'Belum diverifikasi'} — ${s.gates[q.id]?.note||'Bukti belum dicatat'}`)));if(s.position==='driver_distribusi')gates.append(el('p',`Kendaraan: ${s.template.vehicle||'—'}; SIM yang dipersyaratkan: ${s.template.license||'—'}`));summary(section('D. Hasil Penilaian Kompetensi'),s);const evidence=section('Bukti interview dan rubrik yang digunakan');for(const q of s.template.questions){const a=s.answers[q.id];evidence.append(el('h3',q.text));evidence.append(el('p',`ID ${q.id} · ${q.type} · ${q.required?'Wajib':'Opsional'} · Nilai ${a?.score??'Belum dinilai'} · ${a?.naReason||''}`));evidence.append(el('p',a?.note||'Catatan bukti belum diisi'));if(q.type==='dinilai')q.rubric.forEach((x,i)=>evidence.append(el('p',`${i+1}. ${x}`)));}const p=section('E. Hasil Tes Praktik',`Nilai ${fmt(r.practice)} · Penguji ${s.practice.examiner||'—'} · ${s.practice.note||'—'} · Dokumentasi: ${s.practice.documentation||'—'}`);s.template.practice.checks.forEach((x,i)=>p.append(el('p',`${x}: ${s.practice.scores[i]??'Belum dinilai'}`)));section('F. Kekuatan Kandidat',s.strengths||'Belum dicatat');section('G. Kompetensi yang Perlu Dikembangkan',s.development||'Belum dicatat');section('H. Catatan dan Temuan Kritis',`${s.findings||'Belum dicatat'}${r.critical?' • Indikator risiko perlu pendalaman/asesmen ulang.':''}`);section('I. Rekomendasi Sistem Beserta Alasannya',`${r.status}. ${r.reason}`);section('J. Kesimpulan/Keputusan HRD',`${s.finalizedAt&&r.complete?'Tercatat final '+s.finalizedAt:'DRAFT keputusan'} · ${s.decision||'Belum diputuskan'} · ${s.decisionReason||'Alasan belum diisi'}`);section('Konfirmasi informasi pekerjaan (tidak dinilai)',`${s.template.policy}\nDijelaskan: ${s.benefit.explained?'Ya':'Belum'}; dipahami: ${s.benefit.understood?'Ya':'Belum'}; pertanyaan: ${s.benefit.questions?'Ada':'Tidak tercatat'}; keberatan/klarifikasi: ${s.benefit.objections?'Ada':'Tidak tercatat'}. ${s.benefit.note}`);section('K. Pengesahan','Interviewer: ____________________     Pihak berwenang: ____________________\nTanggal: ____________________');}
+async function boot(){for(const n of ['Dashboard','Interview Baru','Riwayat Kandidat','Bank Pertanyaan','Pengaturan Penilaian','Rekap/Laporan'])$('nav').append(button(n,()=>navigate(n)));$('#backup').addEventListener('click',exportJSON);$('#csv').addEventListener('click',exportCSV);$('#import').addEventListener('change',async e=>{try{await importJSON(e.target.files[0]);}catch(err){message('Impor dibatalkan: '+err.message,true);}finally{e.target.value='';}});$('#reset').addEventListener('click',async()=>{try{if(!confirm('Hapus seluruh kandidat dan reset template? Buat backup JSON sebelum melanjutkan.'))return;const next={schema:1,templates:clone(DEFAULTS),sessions:[]};await saveQueue.catch(()=>{});await writeState(next);state=next;current=null;editor=null;navigate('Dashboard');}catch(e){message(e.message,true);}});
+ try{db=await new Promise((resolve,reject)=>{const req=indexedDB.open('baraka-recruitment-v1',1);req.onupgradeneeded=()=>req.result.createObjectStore('data');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);req.onblocked=()=>reject(Error('Database diblokir tab lain'));});const loaded=await new Promise((resolve,reject)=>{const req=db.transaction('data').objectStore('data').get('state');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});if(loaded){validateState(loaded);state=loaded;}storageOK=true;$('#saveStatus').textContent='Penyimpanan lokal siap';db.onversionchange=()=>{db.close();db=null;storageOK=false;message('Database berubah di tab lain. Ekspor lalu buka ulang aplikasi.',true);};}catch(e){db=null;storageOK=false;message('Penyimpanan tidak tersedia/data tidak valid: '+e.message+'. Jangan tutup sebelum ekspor JSON.',true);}render();}
+window.addEventListener('beforeunload',e=>{if(!storageOK){e.preventDefault();e.returnValue='';}});
+// Multiple writers could overwrite a whole-state transaction. One active tab is enforced.
+if(navigator.locks)navigator.locks.request('baraka-single-writer',{ifAvailable:true},lock=>{if(!lock){message('Aplikasi sudah terbuka di tab lain. Tutup tab ini untuk mencegah konflik data.',true);return;}boot();return new Promise(()=>{});});else{message('Gunakan satu tab aplikasi untuk menghindari konflik penyimpanan.');boot();}
+</script></body></html>

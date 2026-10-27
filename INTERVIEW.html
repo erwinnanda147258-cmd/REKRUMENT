@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Modul Interview — Baraka Express</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0efe9;color:#1a1a18;min-height:100vh}
+
+.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.1);padding:0.75rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:#185FA5}
+.topbar h1{font-size:15px;font-weight:500;color:#1a1a18}
+.topbar-sub{font-size:12px;color:#6b6b67}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn-mode{padding:6px 14px;font-size:12px;border:0.5px solid rgba(0,0,0,0.2);border-radius:7px;cursor:pointer;background:#fff;color:#6b6b67;transition:all 0.15s;font-weight:500}
+.btn-mode.active-interview{background:#185FA5;color:#E6F1FB;border-color:#185FA5}
+.btn-mode.active-edit{background:#854F0B;color:#FAEEDA;border-color:#854F0B}
+
+.container{max-width:820px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.tab{padding:7px 16px;font-size:13px;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;cursor:pointer;background:#fff;color:#6b6b67;transition:all 0.15s}
+.tab.active{background:#185FA5;color:#E6F1FB;border-color:#185FA5;font-weight:500}
+
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:0.85rem}
+.card-benefit{background:linear-gradient(135deg,#FFF8E6 0%,#FFEFC7 100%);border:1.5px solid #E8B84B;box-shadow:0 2px 8px rgba(184,138,17,0.12)}
+.card-benefit .sec-title{color:#8A5A0B;border-bottom-color:rgba(138,90,11,0.25)}
+.card-benefit .sec-title::before{content:"✦ ";color:#C9932E}
+.card-benefit .q-num{color:#8A5A0B}
+.card-benefit .tag-wajib{background:#FBDCC0;color:#8A3B0B}
+.card-benefit .tag-info{background:#FDECC8;color:#8A5A0B}
+.sec-title{font-size:11px;font-weight:500;color:#6b6b67;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.85rem;padding-bottom:6px;border-bottom:0.5px solid rgba(0,0,0,0.09)}
+.cand-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:560px){.cand-row{grid-template-columns:1fr}}
+.field label{font-size:12px;color:#6b6b67;display:block;margin-bottom:4px}
+.field input,.field select{width:100%;padding:7px 10px;font-size:13px;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;background:#fff;color:#1a1a18;outline:none;font-family:inherit}
+.field input[readonly]{background:#f5f5f3;color:#6b6b67;cursor:default}
+.field input:focus,.field select:focus{border-color:#185FA5}
+
+/* INTERVIEW MODE */
+.q-item{margin-bottom:1.1rem}
+.q-num{font-size:11px;font-weight:500;color:#185FA5;margin-bottom:3px}
+.q-text{font-size:14px;color:#1a1a18;line-height:1.65;margin-bottom:5px}
+.guide{font-size:12px;color:#6b6b67;font-style:italic;margin-bottom:8px;line-height:1.5}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;margin-bottom:5px}
+.tag-wajib{background:#FCEBEB;color:#A32D2D}
+.tag-info{background:#E6F1FB;color:#0C447C}
+.divider{border:none;border-top:0.5px solid rgba(0,0,0,0.09);margin:8px 0}
+.score-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.score-label{font-size:12px;color:#6b6b67;min-width:80px}
+.score-btns{display:flex;gap:5px}
+.score-btn{width:30px;height:28px;border:0.5px solid rgba(0,0,0,0.18);border-radius:7px;cursor:pointer;background:#fff;font-size:12px;font-weight:500;color:#6b6b67;transition:all 0.12s}
+.score-btn.sel-1{background:#F7C1C1;border-color:#E24B4A;color:#A32D2D}
+.score-btn.sel-2{background:#FAC775;border-color:#BA7517;color:#854F0B}
+.score-btn.sel-3{background:#C0DD97;border-color:#3B6D11;color:#3B6D11}
+.score-btn.sel-4{background:#B5D4F4;border-color:#185FA5;color:#0C447C}
+.score-btn.sel-5{background:#CECBF6;border-color:#534AB7;color:#3C3489}
+.score-desc{font-size:11px;color:#6b6b67}
+.notes-area textarea{width:100%;padding:8px 10px;font-size:13px;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;background:#fff;color:#1a1a18;resize:vertical;min-height:70px;font-family:inherit;outline:none}
+.summary-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+@media(max-width:560px){.summary-bar{grid-template-columns:1fr 1fr}}
+.metric{background:#f5f5f3;border-radius:8px;padding:0.75rem 1rem}
+.metric-label{font-size:11px;color:#6b6b67;margin-bottom:4px}
+.metric-val{font-size:22px;font-weight:500;color:#1a1a18}
+.metric-val.good{color:#3B6D11}
+.metric-val.warn{color:#854F0B}
+.metric-val.bad{color:#A32D2D}
+.rec-badge{display:inline-block;padding:4px 12px;border-radius:8px;font-size:12px;font-weight:500}
+.rec-lanjut{background:#EAF3DE;color:#3B6D11}
+.rec-pertimbang{background:#FAEEDA;color:#854F0B}
+.rec-tolak{background:#FCEBEB;color:#A32D2D}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem}
+.btn-primary{padding:8px 20px;background:#185FA5;color:#E6F1FB;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-secondary{padding:8px 18px;background:#fff;color:#1a1a18;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;font-size:13px;cursor:pointer}
+.btn-print{padding:8px 18px;background:#f5f5f3;color:#6b6b67;border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;font-size:13px;cursor:pointer}
+
+/* EDIT MODE */
+.edit-banner{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:10px;padding:10px 14px;font-size:12px;color:#633806;margin-bottom:1rem;line-height:1.6}
+.edit-section{margin-bottom:1rem}
+.edit-sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.edit-sec-title-input{flex:1;padding:6px 10px;font-size:13px;font-weight:500;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;background:#fff;color:#1a1a18;outline:none;margin-right:8px;font-family:inherit}
+.edit-sec-title-input:focus{border-color:#854F0B}
+.btn-add-q{padding:5px 12px;font-size:12px;background:#FAEEDA;color:#633806;border:0.5px solid #FAC775;border-radius:7px;cursor:pointer;white-space:nowrap}
+.edit-q-item{background:#f5f5f3;border-radius:10px;padding:10px 12px;margin-bottom:8px;position:relative}
+.edit-q-row{display:flex;gap:8px;align-items:flex-start}
+.edit-q-num{font-size:11px;font-weight:500;color:#854F0B;margin-bottom:4px}
+.edit-q-textarea{width:100%;padding:7px 10px;font-size:13px;border:0.5px solid rgba(0,0,0,0.15);border-radius:7px;background:#fff;color:#1a1a18;resize:vertical;min-height:60px;font-family:inherit;outline:none;margin-bottom:6px}
+.edit-q-textarea:focus{border-color:#854F0B}
+.edit-guide-textarea{width:100%;padding:6px 10px;font-size:12px;border:0.5px solid rgba(0,0,0,0.12);border-radius:7px;background:#fff;color:#6b6b67;resize:vertical;min-height:40px;font-family:inherit;outline:none;font-style:italic}
+.edit-guide-textarea:focus{border-color:#854F0B}
+.edit-q-actions{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
+.tag-select{padding:4px 8px;font-size:11px;border:0.5px solid rgba(0,0,0,0.15);border-radius:6px;background:#fff;color:#6b6b67;outline:none;cursor:pointer}
+.btn-del-q{padding:4px 10px;font-size:11px;background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1;border-radius:6px;cursor:pointer;margin-left:auto}
+.btn-add-sec{padding:7px 16px;font-size:12px;background:#fff;color:#6b6b67;border:0.5px solid rgba(0,0,0,0.18);border-radius:8px;cursor:pointer;margin-top:4px}
+.btn-save-edit{padding:8px 20px;background:#854F0B;color:#FAEEDA;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500}
+.hidden{display:none}
+
+@media print{.topbar,.tabs,.action-row,.btn-print{display:none}.card{box-shadow:none;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="topbar h1" style="font-size:15px;font-weight:500">Modul Interview — Baraka Express</div>
+      <div class="topbar-sub">HRD · Muhammad Erwin</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-mode active-interview" id="btn-interview-mode" onclick="setAppMode('interview')">Mode Interview</button>
+    <button class="btn-mode" id="btn-edit-mode" onclick="setAppMode('edit')">Edit Pertanyaan</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="switchPos('mt_staff')">MT Staff</button>
+    <button class="tab" onclick="switchPos('staff_kas')">Staff Kas</button>
+    <button class="tab" onclick="switchPos('staff_armada')">Staff Armada</button>
+    <button class="tab" onclick="switchPos('staff_qc')">Staff QC</button>
+    <button class="tab" onclick="switchPos('tkbm')">TKBM</button>
+    <button class="tab" onclick="switchPos('kenek')">Kenek</button>
+    <button class="tab" onclick="switchPos('driver_distribusi')">Driver Distribusi</button>
+  </div>
+
+  <!-- INTERVIEW MODE -->
+  <div id="interview-mode">
+    <div class="card">
+      <div class="sec-title">Data kandidat</div>
+      <div class="cand-row">
+        <div class="field"><label>Nama lengkap kandidat</label><input type="text" id="nama" placeholder="Nama kandidat"/></div>
+        <div class="field"><label>Tanggal interview</label><input type="date" id="tgl"/></div>
+        <div class="field"><label>Interviewer</label><input type="text" value="Muhammad Erwin" readonly/></div>
+      </div>
+    </div>
+    <div id="q-container"></div>
+    <div class="card">
+      <div class="sec-title">Catatan umum</div>
+      <div class="notes-area"><textarea id="catatan" placeholder="Kesan umum, catatan khusus, hal yang perlu dipertimbangkan..."></textarea></div>
+    </div>
+    <div class="summary-bar">
+      <div class="metric"><div class="metric-label">Total nilai</div><div class="metric-val" id="total-val">0</div></div>
+      <div class="metric"><div class="metric-label">Nilai maks</div><div class="metric-val" id="maks-val">0</div></div>
+      <div class="metric"><div class="metric-label">Persentase</div><div class="metric-val" id="persen-val">0%</div></div>
+      <div class="metric"><div class="metric-label">Rekomendasi</div><div style="margin-top:6px" id="rekomen-val">—</div></div>
+    </div>
+    <div class="action-row">
+      <button class="btn-primary" onclick="cetakHasil()">Cetak / Simpan PDF</button>
+      <button class="btn-secondary" onclick="resetForm()">Reset form</button>
+    </div>
+  </div>
+
+  <!-- EDIT MODE -->
+  <div id="edit-mode" class="hidden">
+    <div class="edit-banner">
+      Mode edit aktif — kamu bisa mengubah teks pertanyaan, panduan penilaian, menambah atau menghapus pertanyaan, serta menambah seksi baru. Perubahan akan tersimpan di browser/perangkat ini saat kamu klik <strong>Simpan Perubahan</strong>, jadi tidak hilang setelah file ditutup.
+    </div>
+    <div id="edit-container"></div>
+    <div class="action-row">
+      <button class="btn-save-edit" onclick="saveEdits()">Simpan perubahan</button>
+      <button class="btn-add-sec" onclick="addSection()">+ Tambah seksi baru</button>
+      <button class="btn-secondary" onclick="resetPertanyaanDefault()">Reset pertanyaan default</button>
+      <button class="btn-secondary" onclick="setAppMode('interview')">Batal</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const POSISI_KEYS = ['mt_staff','staff_kas','staff_armada','staff_qc','tkbm','kenek','driver_distribusi'];
+const scoreDesc = {1:'Tidak memadai',2:'Kurang',3:'Cukup',4:'Baik',5:'Sangat baik'};
+let currentPos = 'mt_staff';
+let scores = {};
+let appMode = 'interview';
+
+// Objek seksi tambahan Benefit & Ketentuan
+const benefitSection = {
+  title: "Note Benefit & Ketentuan Baraka Express",
+  qs: [
+    { 
+      q: "Berikut adalah ketentuan absensi dan keterlambatan di Baraka Express: (1) Keterlambatan dikenakan potong Rp 5.000 per 5 menit telat, (2) Diberikan kesempatan/toleransi keterlambatan maksimal 2 kali per bulan, (3) Lupa absen pulang akan dipotong setengah Uang Makan (UM) pada hari berikutnya. Apakah kamu siap mematuhi peraturan kedisiplinan ini?", 
+      guide: "Pastikan kandidat paham dan sepakat dengan aturan kedisiplinan absensi.", 
+      tag: "info" 
+    },
+    { 
+      q: "Berikut benefit dan hak karyawan di Baraka Express: (1) Ditanggung BPJS Kesehatan Kelas 3, (2) BPJS Ketenagakerjaan (JHT) diikutkan dalam antrian setelah 3 bulan masa kerja, (3) Jatah cuti 2 hari/bulan setelah 3 bulan bekerja, (4) UM pada tanggal merah masuk kerja dikali 1,5x (misal UM normal Rp 60.000 jadi Rp 90.000). Apakah ketentuan benefit ini sudah jelas dan sesuai bagi kamu?", 
+      guide: "Nilai respon kandidat terhadap benefit dan hak kerja yang ditawarkan.", 
+      tag: "info" 
+    }
+  ]
+};
+
+const defaultPositions = {
+  mt_staff: {
+    label: "MT Staff",
+    sections: [
+      { title: "Perkenalan & latar belakang", qs: [
+        { q: "Coba ceritakan tentang diri kamu — sekolah terakhir kamu di mana, dan setelah lulus ngapain aja?", guide: "Nilai kejelasan komunikasi, latar belakang pendidikan, dan konsistensi cerita kandidat dari awal.", tag: "" },
+        { q: "Kenapa kamu tertarik melamar ke Baraka Express? Sebelumnya sudah tahu perusahaan ini dari mana?", guide: "Nilai motivasi dan kesungguhan kandidat — waspada jika jawaban terkesan asal atau tidak tahu sama sekali bidang usaha perusahaan.", tag: "" },
+        { q: "Sebelumnya pernah kerja di mana, ngapain di sana, dan kenapa akhirnya kamu keluar dari tempat itu?", guide: "Nilai relevansi pengalaman kerja DAN gali alasan resign/keluar. Waspada jika alasan tidak jelas, berpindah-pindah kerja dalam waktu singkat berkali-kali, atau menyalahkan pihak lain secara berlebihan.", tag: "" },
+        { q: "Sebelum lanjut, boleh dicek kelengkapan berkasnya ya — KTP, ijazah terakhir, dan SKCK kamu sudah ada atau masih perlu diurus? Ada kondisi kesehatan tertentu (penyakit, alergi, riwayat cedera) yang perlu kami tahu karena pekerjaan ini melibatkan aktivitas fisik dan lapangan?", guide: "Pastikan dokumen administrasi bisa dilengkapi sebelum tanggal mulai kerja (catat dokumen apa saja yang masih menyusul). Tanyakan kondisi kesehatan secara sopan dan tidak diskriminatif — tujuannya memastikan kandidat sanggup menjalankan tugas fisik, bukan untuk menyaring berdasarkan kondisi kesehatan itu sendiri.", tag: "wajib" },
+      ]},
+      { title: "Kesiapan mobilitas & jam kerja", qs: [
+        { q: "Posisi ini namanya MT Staff — artinya kamu akan belajar dulu sambil kerja, dan ke depannya bisa diarahkan jadi checker, staff kas, staff armada, staff QC, atau staff admin mekanik, tergantung posisi yang kosong. Kalau belum ada yang kosong, kamu tetap menjalankan peran MT dulu. Kamu siap dengan kondisi seperti itu?", guide: "Nilai pemahaman dan kesiapan kandidat terhadap alur karir MT yang dinamis dan tidak pasti arahnya di awal.", tag: "info" },
+        { q: "Baraka Express bergerak di bidang ekspedisi dan logistik yang cakupannya luas. Ada kemungkinan kamu ditempatkan di cabang atau lokasi lain di luar kota ini. Kamu siap untuk itu?", guide: "Jawaban WAJIB: kandidat harus menyatakan siap ditempatkan di mana saja. Jika tidak siap, catat sebagai pertimbangan serius.", tag: "wajib" },
+        { q: "Kalau kamu dapat jadwal kerja di luar jam normal, shift subuh/malam, atau diminta lembur mendadak, bagaimana sikapmu?", guide: "Nilai fleksibilitas dan dedikasi kandidat dalam bekerja di luar jam normal.", tag: "" },
+        { q: "Pekerjaan MT Staff kadang melibatkan aktivitas fisik seperti angkat-angkat barang, berdiri atau berjalan lama, dan kerja di gudang/lapangan. Bagaimana kondisi fisikmu sekarang, dan siap dengan jenis pekerjaan seperti itu?", guide: "Nilai kesiapan fisik kandidat secara jujur — penting karena banyak arah karir lanjutan MT Staff bersifat lapangan/operasional.", tag: "wajib" },
+        { q: "Dari rumah kamu ke lokasi kerja kira-kira berapa jauh atau berapa lama? Kamu punya kendaraan pribadi untuk berangkat kerja, termasuk kalau harus masuk subuh atau pulang malam?", guide: "Nilai kesiapan logistik pribadi kandidat — jarak/akses transportasi sering jadi alasan mengundurkan diri di masa awal kerja kalau tidak digali sejak interview.", tag: "" },
+      ]},
+      { title: "Karakter & sikap kerja", qs: [
+        { q: "Kamu tipe orang yang lebih suka kerja sendiri atau kerja dalam tim? Kenapa?", guide: "Nilai kemampuan kolaborasi dan adaptasi dalam lingkungan kerja.", tag: "" },
+        { q: "Pernah ga kamu punya masalah sama atasan atau rekan kerja? Ceritakan, dan bagaimana kamu selesaikan?", guide: "Nilai kedewasaan emosional dan kemampuan resolusi konflik.", tag: "" },
+        { q: "Kalau kamu diberi tugas yang belum pernah kamu lakukan sebelumnya, apa yang kamu lakukan?", guide: "Nilai inisiatif belajar dan kemandirian kandidat.", tag: "" },
+        { q: "Nanti di beberapa arah karir MT Staff kamu bisa dipercaya pegang barang atau uang milik pelanggan/perusahaan (misalnya di checker atau staff kas). Menurut kamu, seberapa penting kejujuran dalam hal itu, dan pernah nggak kamu dihadapkan situasi harus jujur soal sesuatu yang merugikan diri kamu sendiri?", guide: "Nilai integritas kandidat terhadap penanganan barang/uang milik orang lain — krusial karena MT Staff berpotensi diarahkan ke posisi yang pegang aset perusahaan langsung.", tag: "wajib" },
+        { q: "Kalau diterima, kira-kira kamu berencana kerja di sini untuk berapa lama? Apa rencana atau target kamu ke depan?", guide: "Nilai risiko turnover — waspada jika kandidat menyebut posisi ini hanya batu loncatan sementara sambil menunggu peluang lain dalam waktu sangat dekat.", tag: "" },
+      ]},
+      { title: "Ekspektasi kompensasi", qs: [
+        { q: "Untuk masa MT Staff ini, komponen gajinya begini ya: gaji pokok Rp850.000, subsidi area Rp50.000 — itu komponen tetap per bulan. Lalu ada uang makan Rp45.000/hari dan bonus harian Rp20.000/hari, yang dihitung sesuai jumlah hari kamu masuk kerja. Kalau masuk penuh sekitar 25 hari kerja, totalnya bisa sekitar Rp2,5 juta per bulan. Setelah dengar breakdown-nya, menurut kamu apakah itu cukup untuk kebutuhan kamu saat ini? Apa pertimbanganmu?", guide: "WAJIB dijelaskan urut dan transparan sebelum tanya pendapat kandidat: (1) gaji pokok Rp850.000 + subsidi area Rp50.000 = komponen tetap Rp900.000, (2) uang makan Rp45.000/hari + bonus harian Rp20.000/hari = Rp65.000/hari, dibayar sesuai kehadiran (bukan komponen tetap). Total ±Rp2,5 juta adalah estimasi jika masuk penuh ±25 hari kerja, bisa lebih kecil jika ada absen. Nilai kesesuaian ekspektasi gaji kandidat dan catat jika ada keberatan atau pertimbangan finansial serius (mis. tanggungan keluarga, kos jauh, cicilan, dll) — ini sering jadi alasan resign dini kalau tidak digali di awal.", tag: "wajib" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection)),
+      { title: "Penutup interview", qs: [
+        { q: "Kalau proses berlanjut dan kamu dinyatakan diterima, kira-kira kamu bisa mulai kerja paling cepat kapan?", guide: "Catat ketersediaan tanggal mulai kerja untuk keperluan onboarding — penting kalau kandidat masih terikat notice period di tempat lama.", tag: "" },
+        { q: "Sejauh ini ada yang mau kamu tanyakan balik ke kami soal pekerjaan atau perusahaan?", guide: "Beri ruang kandidat bertanya. Catat pertanyaan yang diajukan — bisa jadi indikator kesungguhan dan hal apa yang mereka anggap penting.", tag: "" },
+      ]},
+    ]
+  },
+  staff_kas: {
+    label: "Staff Kas",
+    sections: [
+      { title: "Latar belakang & motivasi", qs: [
+        { q: "Ceritakan pengalaman kamu di bidang keuangan atau administrasi kas sebelumnya.", guide: "Nilai relevansi pengalaman dengan pengelolaan uang", tag: "" },
+        { q: "Mengapa kamu tertarik dengan posisi Staff Kas di Baraka Express?", guide: "Nilai motivasi dan pemahaman tentang tanggung jawab posisi ini", tag: "" },
+        { q: "Apakah kamu pernah menangani uang tunai dalam jumlah besar? Bagaimana prosedur yang kamu terapkan?", guide: "Nilai pengalaman dan kehati-hatian dalam penanganan kas", tag: "" },
+      ]},
+      { title: "Kemampuan teknis & ketelitian", qs: [
+        { q: "Aplikasi atau software apa saja yang pernah kamu gunakan untuk pencatatan keuangan?", guide: "Nilai kemampuan teknis — minimal familiar Excel/spreadsheet", tag: "" },
+        { q: "Bagaimana cara kamu memastikan tidak ada selisih antara fisik uang dan catatan kas?", guide: "Nilai prosedur kerja dan ketelitian kandidat", tag: "" },
+        { q: "Jika di akhir hari ada selisih kas sebesar Rp 50.000, apa langkah yang akan kamu ambil?", guide: "Nilai kemampuan problem solving dan prosedur pelaporan", tag: "" },
+        { q: "Seberapa cepat kamu bisa menghitung uang tunai dengan akurat? Apakah kamu terbiasa bekerja di bawah tekanan?", guide: "Nilai kecepatan, akurasi, dan ketahanan kerja", tag: "" },
+      ]},
+      { title: "Integritas & sikap kerja", qs: [
+        { q: "Bagaimana pendapatmu tentang pentingnya kerahasiaan data keuangan perusahaan?", guide: "Nilai pemahaman tentang kerahasiaan dan etika kerja", tag: "" },
+        { q: "Pernahkah kamu menghadapi situasi di mana ada tekanan untuk tidak mencatat transaksi secara benar? Bagaimana kamu menyikapinya?", guide: "Nilai integritas dan keberanian moral kandidat", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  },
+  staff_armada: {
+    label: "Staff Armada",
+    sections: [
+      { title: "Latar belakang & pengetahuan armada", qs: [
+        { q: "Ceritakan pengalaman kamu dalam pengelolaan kendaraan atau armada sebelumnya.", guide: "Nilai relevansi pengalaman dengan operasional kendaraan", tag: "" },
+        { q: "Apa saja yang kamu ketahui tentang prosedur perawatan rutin kendaraan operasional?", guide: "Nilai pengetahuan teknis dasar kendaraan", tag: "" },
+        { q: "Apakah kamu memiliki SIM? Jenis apa? Apakah kamu bisa mengemudi kendaraan berat?", guide: "Nilai kualifikasi teknis — SIM A/B penting untuk staff armada", tag: "" },
+      ]},
+      { title: "Operasional & administrasi", qs: [
+        { q: "Bagaimana cara kamu memantau dan mencatat kondisi armada setiap harinya?", guide: "Nilai ketelitian dalam dokumentasi dan monitoring", tag: "" },
+        { q: "Jika ada kendaraan yang tiba-tiba mogok di jalan saat membawa muatan, apa yang akan kamu lakukan?", guide: "Nilai kemampuan respons cepat dan problem solving di lapangan", tag: "" },
+        { q: "Bagaimana cara kamu memastikan jadwal servis kendaraan tidak terlewat?", guide: "Nilai kemampuan perencanaan dan manajemen jadwal", tag: "" },
+        { q: "Pengalaman apa yang kamu miliki dalam berkoordinasi dengan bengkel atau vendor perbaikan kendaraan?", guide: "Nilai kemampuan negosiasi dan koordinasi eksternal", tag: "" },
+      ]},
+      { title: "Sikap & ketangguhan kerja", qs: [
+        { q: "Apakah kamu bersedia bekerja di luar jam kerja normal jika ada kendaraan yang perlu ditangani mendesak?", guide: "Nilai fleksibilitas dan komitmen — penting untuk operasional 24 jam", tag: "" },
+        { q: "Bagaimana cara kamu menangani pengemudi yang tidak mematuhi prosedur perawatan kendaraan?", guide: "Nilai kemampuan komunikasi dan penanganan konflik", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  },
+  staff_qc: {
+    label: "Staff QC",
+    sections: [
+      { title: "Latar belakang & pengetahuan QC", qs: [
+        { q: "Ceritakan pengalaman kamu di bidang quality control atau pengawasan mutu sebelumnya.", guide: "Nilai relevansi pengalaman dengan pekerjaan QC di logistik", tag: "" },
+        { q: "Apa yang kamu pahami tentang standar QC dalam industri ekspedisi/logistik?", guide: "Nilai pengetahuan tentang prosedur dan standar kualitas", tag: "" },
+        { q: "Pernahkah kamu menolak atau menahan pengiriman barang karena ada masalah kualitas? Ceritakan.", guide: "Nilai ketegasan dan keberanian dalam menerapkan standar", tag: "" },
+      ]},
+      { title: "Kemampuan teknis & prosedur", qs: [
+        { q: "Bagaimana prosedur yang kamu terapkan saat memeriksa kondisi barang sebelum dimuat?", guide: "Nilai pemahaman prosedur dan standar pemeriksaan", tag: "" },
+        { q: "Dokumen apa saja yang biasanya kamu periksa dalam proses QC pengiriman barang?", guide: "Nilai pengetahuan administrasi dan dokumentasi QC", tag: "" },
+        { q: "Jika kamu menemukan kerusakan barang saat bongkar muat, apa langkah yang kamu ambil?", guide: "Nilai prosedur penanganan ketidaksesuaian dan eskalasi", tag: "" },
+      ]},
+      { title: "Analitis & sikap kerja", qs: [
+        { q: "Bagaimana cara kamu memastikan konsistensi pemeriksaan QC saat volume pengiriman sangat tinggi?", guide: "Nilai kemampuan kerja di bawah tekanan tanpa mengorbankan kualitas", tag: "" },
+        { q: "Alat atau teknologi apa yang pernah kamu gunakan untuk mendokumentasikan hasil QC?", guide: "Nilai kemampuan teknis dokumentasi — foto, aplikasi, dsb.", tag: "" },
+        { q: "Jika ada pengemudi atau rekan kerja yang memprotes keputusan QC kamu, bagaimana cara kamu menanganinya?", guide: "Nilai kemampuan komunikasi dan ketegasan profesional", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  },
+  tkbm: {
+    label: "TKBM",
+    sections: [
+      { title: "Latar belakang & pengalaman", qs: [
+        { q: "Sebelumnya pernah kerja angkat-angkat atau bongkar muat barang? Di mana dan berapa lama?", guide: "Nilai pengalaman lapangan. Jika belum pernah, nilai kemauan dan fisik.", tag: "" },
+        { q: "Biasanya barang apa yang pernah kamu angkut atau pindahkan? Beratnya kira-kira berapa?", guide: "Nilai variasi pengalaman fisik dan kemampuan estimasi beban kerja", tag: "" },
+        { q: "Kamu pernah ikut pelatihan kerja atau punya sertifikat apa pun, misalnya dari Disnaker atau lembaga lain?", guide: "Nilai kualifikasi tambahan — tidak wajib, tapi jadi nilai plus", tag: "" },
+      ]},
+      { title: "Kesiapan fisik & kesadaran keselamatan kerja", qs: [
+        { q: "Kondisi badan kamu sekarang gimana? Ada sakit atau cedera yang perlu kami tahu?", guide: "Nilai kesiapan fisik. Pastikan tidak ada kondisi yang berisiko untuk pekerjaan berat.", tag: "" },
+        { q: "Menurut kamu, hal apa yang paling penting diperhatikan supaya kerja angkat barang atau bongkar muat tidak bikin celaka?", guide: "Nilai kesadaran keselamatan. Jawaban ideal: jaga posisi badan, tidak tergesa-gesa, pakai alat pelindung, dll.", tag: "" },
+        { q: "Kalau kamu lagi angkat barang berat dan tiba-tiba punggung atau kaki kamu sakit, apa yang akan kamu lakukan?", guide: "Nilai respons terhadap situasi darurat fisik — apakah berhenti dan lapor, atau memaksakan diri", tag: "" },
+        { q: "Pernah lihat atau alami kecelakaan saat kerja? Ceritakan apa yang terjadi dan apa yang kamu lakukan waktu itu?", guide: "Nilai pengalaman nyata dan respons terhadap kecelakaan kerja", tag: "" },
+      ]},
+      { title: "Sikap & ketahanan kerja", qs: [
+        { q: "Pekerjaan ini bisa kena shift malam atau masuk di hari libur kalau ada muatan yang harus dibongkar. Kamu siap dengan itu?", guide: "Nilai fleksibilitas jadwal — krusial untuk operasional yang tidak bisa ditunda", tag: "" },
+        { q: "Kalau badan kamu sudah capek tapi pekerjaan belum selesai, biasanya gimana cara kamu hadapin?", guide: "Nilai ketahanan fisik dan mental serta cara kandidat mengelola kelelahan", tag: "" },
+        { q: "Kalau mandor kasih instruksi yang menurut kamu bahaya atau kurang aman, kamu bakal ngapain?", guide: "Nilai keberanian menyampaikan pendapat dan pemahaman dasar soal keselamatan kerja", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  },
+  kenek: {
+    label: "Kenek",
+    sections: [
+      { title: "Latar belakang & pengalaman", qs: [
+        { q: "Sebelumnya pernah kerja jadi kenek atau bantu-bantu di kendaraan pengiriman barang? Di mana dan berapa lama?", guide: "Nilai pengalaman relevan. Jika belum pernah, nilai kemauan dan kesiapan fisik.", tag: "" },
+        { q: "Kamu tamatan apa? Setelah lulus ngapain aja sebelum melamar ke sini?", guide: "Nilai latar belakang pendidikan dan riwayat aktivitas kandidat", tag: "" },
+        { q: "Kenapa kamu mau kerja jadi kenek di Baraka Express? Dari mana kamu tahu lowongan ini?", guide: "Nilai motivasi dan kesungguhan kandidat", tag: "" },
+      ]},
+      { title: "Kesiapan kerja lapangan", qs: [
+        { q: "Kerjaan kenek itu termasuk bantu muat dan turunkan barang cargo, ikut perjalanan antar kota, dan bantu driver di jalan. Kamu siap dengan itu semua?", guide: "Nilai pemahaman kandidat terhadap tanggung jawab kenek di perusahaan cargo", tag: "info" },
+        { q: "Kamu siap kalau harus berangkat pagi buta atau pulang malam karena ikut pengiriman jarak jauh?", guide: "Nilai fleksibilitas jam kerja — penting untuk operasional distribusi cargo", tag: "wajib" },
+        { q: "Pernah nggak kamu melakukan perjalanan jauh — ke luar kota atau lintas provinsi? Kamu nyaman dengan itu?", guide: "Nilai kesiapan mobilitas dan ketahanan perjalanan jauh", tag: "" },
+        { q: "Kondisi fisik kamu sekarang gimana? Ada sakit atau cedera yang perlu kami tahu sebelum mulai kerja?", guide: "Nilai kesiapan fisik untuk pekerjaan lapangan yang berat", tag: "" },
+      ]},
+      { title: "Sikap & karakter kerja", qs: [
+        { q: "Kalau driver kasih instruksi soal cara angkat atau susun barang, kamu bakal nurut atau punya cara sendiri? Gimana biasanya?", guide: "Nilai kemampuan menerima arahan dan bekerja dalam tim dua orang (driver-kenek)", tag: "" },
+        { q: "Pernah nggak ada barang yang rusak atau hilang saat kamu bantu bongkar-muat? Ceritakan apa yang terjadi.", guide: "Nilai kejujuran, tanggung jawab, dan cara kandidat menangani insiden", tag: "" },
+        { q: "Kalau di tengah perjalanan ada barang yang jatuh atau muatan bergeser, apa yang akan kamu lakukan?", guide: "Nilai inisiatif, tanggung jawab, dan kesigapan dalam situasi darurat di lapangan", tag: "" },
+        { q: "Menurut kamu, take home pay Rp 2,2–2,5 juta per bulan itu cukup untuk kebutuhan kamu sekarang?", guide: "Nilai kesesuaian ekspektasi gaji. Catat jika ada keberatan.", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  },
+  driver_distribusi: {
+    label: "Driver Distribusi",
+    sections: [
+      { title: "Latar belakang & lisensi mengemudi", qs: [
+        { q: "Kamu punya SIM apa saja sekarang? Masih berlaku sampai kapan?", guide: "Wajib punya minimal SIM B1 untuk kendaraan cargo. Catat jenis dan masa berlaku SIM.", tag: "wajib" },
+        { q: "Sudah berapa lama kamu nyetir kendaraan besar seperti truk atau engkel? Pernah bawa muatan cargo sebelumnya?", guide: "Nilai pengalaman mengemudi kendaraan berat dan relevansinya dengan distribusi cargo", tag: "" },
+        { q: "Sebelumnya pernah kerja sebagai driver di perusahaan apa? Kendaraan apa yang biasa kamu kemudikan?", guide: "Nilai rekam jejak kerja sebagai driver dan jenis kendaraan yang dikuasai", tag: "" },
+        { q: "Kamu tamatan apa? Pernah ikut pelatihan mengemudi atau kursus terkait transportasi?", guide: "Nilai latar belakang pendidikan — minimal SMP. Pelatihan tambahan jadi nilai plus.", tag: "" },
+      ]},
+      { title: "Kemampuan & pengetahuan mengemudi", qs: [
+        { q: "Rute pengiriman kita bisa sampai lintas kota atau lintas provinsi. Kamu familiar nggak dengan jalan-jalan di daerah sini? Bisa baca peta atau pakai GPS?", guide: "Nilai pengetahuan rute dan kemampuan navigasi — penting untuk efisiensi pengiriman", tag: "" },
+        { q: "Pernah nggak kamu alami masalah teknis kendaraan di jalan, misalnya ban bocor atau mesin overheat? Apa yang kamu lakukan waktu itu?", guide: "Nilai kemampuan penanganan darurat di jalan dan inisiatif problem solving", tag: "" },
+        { q: "Menurut kamu, hal paling penting apa yang harus dicek sebelum berangkat bawa muatan cargo?", guide: "Nilai kesadaran keselamatan berkendara dan prosedur cek kendaraan sebelum jalan", tag: "" },
+        { q: "Pernah kena tilang atau terlibat kecelakaan saat kerja sebagai driver? Ceritakan secara jujur.", guide: "Nilai kejujuran dan rekam jejak keselamatan berkendara kandidat", tag: "" },
+      ]},
+      { title: "Tanggung jawab muatan & pengiriman", qs: [
+        { q: "Kalau barang yang kamu bawa ternyata kurang jumlahnya atau ada yang rusak saat tiba di tujuan, kamu bakal ngapain?", guide: "Nilai tanggung jawab, kejujuran, dan prosedur pelaporan yang dipahami kandidat", tag: "" },
+        { q: "Gimana cara kamu mastiin barang yang dimuat sudah aman dan nggak bakal bergeser atau jatuh selama perjalanan?", guide: "Nilai pemahaman tentang pengamanan muatan cargo selama distribusi", tag: "" },
+        { q: "Kalau ada pelanggan atau penerima barang yang komplain karena barang telat atau ada yang rusak, gimana cara kamu ngadepin mereka?", guide: "Nilai kemampuan komunikasi dan sikap profesional saat menghadapi keluhan di lapangan", tag: "" },
+      ]},
+      { title: "Kesiapan & komitmen kerja", qs: [
+        { q: "Pekerjaan driver di sini bisa kena jadwal subuh atau harus menginap di kota tujuan kalau pengiriman jauh. Kamu dan keluarga sudah siap dengan kondisi itu?", guide: "Nilai kesiapan mobilitas tinggi dan dukungan keluarga — krusial untuk driver jarak jauh", tag: "wajib" },
+        { q: "Kalau kendaraan yang kamu kemudikan tiba-tiba butuh perawatan atau servis, kamu siap lapor ke tim armada dan nggak coba-coba benerin sendiri tanpa izin?", guide: "Nilai pemahaman alur koordinasi dengan tim armada dan kepatuhan prosedur", tag: "" },
+        { q: "Menurut kamu, take home pay Rp 2,8–3,2 juta per bulan itu cukup untuk kebutuhan kamu sekarang?", guide: "Nilai kesesuaian ekspektasi gaji. Catat jika ada keberatan atau negosiasi.", tag: "" },
+      ]},
+      JSON.parse(JSON.stringify(benefitSection))
+    ]
+  }
+};
+
+// ── PENYIMPANAN PERUBAHAN ──────────────────────────────
+const STORAGE_KEY = 'baraka_interview_positions_v3';
+
+function loadPositions() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch (e) {
+    console.warn('Gagal membaca data tersimpan:', e);
+  }
+  return JSON.parse(JSON.stringify(defaultPositions));
+}
+
+function persistPositions() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+  } catch (e) {
+    alert('Perubahan tidak bisa disimpan di browser ini. Coba gunakan Chrome/Edge dan pastikan localStorage tidak diblokir.');
+  }
+}
+
+function resetPertanyaanDefault() {
+  if (!confirm('Kembalikan semua pertanyaan ke versi awal bawaan file?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  positions = JSON.parse(JSON.stringify(defaultPositions));
+  scores = {};
+  if (appMode === 'edit') renderEditMode();
+  else { renderQuestions(); updateSummary(); }
+  alert('Pertanyaan sudah dikembalikan ke versi awal.');
+}
+
+let positions = loadPositions();
+
+// ── APP MODE ──────────────────────────────────────────
+function setAppMode(mode) {
+  appMode = mode;
+  document.getElementById('interview-mode').classList.toggle('hidden', mode !== 'interview');
+  document.getElementById('edit-mode').classList.toggle('hidden', mode !== 'edit');
+  document.getElementById('btn-interview-mode').className = 'btn-mode' + (mode === 'interview' ? ' active-interview' : '');
+  document.getElementById('btn-edit-mode').className = 'btn-mode' + (mode === 'edit' ? ' active-edit' : '');
+  if (mode === 'edit') renderEditMode();
+  else renderQuestions();
+}
+
+// ── INTERVIEW MODE ────────────────────────────────────
+function switchPos(pos) {
+  currentPos = pos;
+  scores = {};
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', POSISI_KEYS[i] === pos));
+  if (appMode === 'interview') { renderQuestions(); updateSummary(); }
+  else renderEditMode();
+}
+
+function renderQuestions() {
+  const pos = positions[currentPos];
+  const container = document.getElementById('q-container');
+  let html = '', qNum = 1;
+  pos.sections.forEach(sec => {
+    const isBenefit = /benefit/i.test(sec.title) && /ketentuan/i.test(sec.title);
+    html += `<div class="card${isBenefit ? ' card-benefit' : ''}"><div class="sec-title">${sec.title}</div>`;
+    sec.qs.forEach(q => {
+      const id = `q_${qNum}`;
+      let tagHtml = '';
+      if (q.tag === 'wajib') tagHtml = `<span class="tag tag-wajib">Wajib terpenuhi</span><br>`;
+      else if (q.tag === 'info') tagHtml = `<span class="tag tag-info">Informasi untuk kandidat</span><br>`;
+      html += `<div class="q-item">
+        <div class="q-num">Pertanyaan ${qNum}</div>
+        ${tagHtml}
+        <div class="q-text">${q.q}</div>
+        <div class="guide">${q.guide}</div>
+        <hr class="divider">
+        <div class="score-row">
+          <span class="score-label">Nilai (1–5):</span>
+          <div class="score-btns">
+            ${[1,2,3,4,5].map(s=>`<button class="score-btn" id="${id}_${s}" onclick="setScore('${id}',${s})">${s}</button>`).join('')}
+          </div>
+          <span class="score-desc" id="${id}_desc"></span>
+        </div>
+      </div>`;
+      qNum++;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+  // Restore scores display
+  Object.keys(scores).forEach(id => {
+    const val = scores[id];
+    [1,2,3,4,5].forEach(s => {
+      const btn = document.getElementById(`${id}_${s}`);
+      if (btn) btn.className = 'score-btn' + (s===val?` sel-${s}`:'');
+    });
+    const desc = document.getElementById(`${id}_desc`);
+    if (desc) desc.textContent = scoreDesc[val];
+  });
+}
+
+function setScore(id, val) {
+  scores[id] = val;
+  [1,2,3,4,5].forEach(s => {
+    const btn = document.getElementById(`${id}_${s}`);
+    if (btn) btn.className = 'score-btn' + (s===val?` sel-${s}`:'');
+  });
+  const desc = document.getElementById(`${id}_desc`);
+  if (desc) desc.textContent = scoreDesc[val];
+  updateSummary();
+}
+
+function updateSummary() {
+  const pos = positions[currentPos];
+  let totalQ = 0;
+  pos.sections.forEach(s => totalQ += s.qs.length);
+  const maks = totalQ * 5;
+  const total = Object.values(scores).reduce((a,b)=>a+b,0);
+  const persen = maks > 0 ? Math.round((total/maks)*100) : 0;
+  document.getElementById('total-val').textContent = total;
+  document.getElementById('maks-val').textContent = maks;
+  const pEl = document.getElementById('persen-val');
+  pEl.textContent = persen + '%';
+  pEl.className = 'metric-val' + (persen>=70?' good':persen>=50?' warn':persen>0?' bad':'');
+  const rec = document.getElementById('rekomen-val');
+  if (!Object.keys(scores).length) { rec.innerHTML='—'; return; }
+  if (persen>=70) rec.innerHTML='<span class="rec-badge rec-lanjut">Lanjutkan</span>';
+  else if (persen>=50) rec.innerHTML='<span class="rec-badge rec-pertimbang">Pertimbangkan</span>';
+  else rec.innerHTML='<span class="rec-badge rec-tolak">Tolak</span>';
+}
+
+function resetForm() {
+  scores = {};
+  document.getElementById('nama').value='';
+  document.getElementById('tgl').value='';
+  document.getElementById('catatan').value='';
+  renderQuestions(); updateSummary();
+}
+
+function cetakHasil() { window.print(); }
+
+// ── EDIT MODE ─────────────────────────────────────────
+function renderEditMode() {
+  const pos = positions[currentPos];
+  const container = document.getElementById('edit-container');
+  let html = '';
+  pos.sections.forEach((sec, si) => {
+    html += `<div class="card edit-section" id="sec_${si}">
+      <div class="edit-sec-header">
+        <input class="edit-sec-title-input" id="sec_title_${si}" value="${esc(sec.title)}" placeholder="Nama seksi..."/>
+        <button class="btn-add-q" onclick="addQuestion(${si})">+ Tambah pertanyaan</button>
+      </div>`;
+    sec.qs.forEach((q, qi) => {
+      html += `<div class="edit-q-item" id="eq_${si}_${qi}">
+        <div class="edit-q-num">Pertanyaan ${qi+1}</div>
+        <textarea class="edit-q-textarea" id="eq_text_${si}_${qi}" placeholder="Teks pertanyaan...">${esc(q.q)}</textarea>
+        <textarea class="edit-guide-textarea" id="eq_guide_${si}_${qi}" placeholder="Panduan penilaian (opsional)...">${esc(q.guide)}</textarea>
+        <div class="edit-q-actions">
+          <label style="font-size:11px;color:#6b6b67;margin-right:4px">Label:</label>
+          <select class="tag-select" id="eq_tag_${si}_${qi}">
+            <option value="" ${q.tag===''?'selected':''}>Tanpa label</option>
+            <option value="wajib" ${q.tag==='wajib'?'selected':''}>Wajib terpenuhi</option>
+            <option value="info" ${q.tag==='info'?'selected':''}>Informasi untuk kandidat</option>
+          </select>
+          <button class="btn-del-q" onclick="deleteQuestion(${si},${qi})">Hapus</button>
+        </div>
+      </div>`;
+    });
+    html += `<div style="margin-top:8px;display:flex;justify-content:flex-end">
+      <button style="padding:4px 10px;font-size:11px;background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1;border-radius:6px;cursor:pointer" onclick="deleteSection(${si})">Hapus seksi ini</button>
+    </div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function esc(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function saveEdits() {
+  const pos = positions[currentPos];
+  pos.sections.forEach((sec, si) => {
+    const titleEl = document.getElementById(`sec_title_${si}`);
+    if (titleEl) sec.title = titleEl.value.trim() || sec.title;
+    sec.qs.forEach((q, qi) => {
+      const tEl = document.getElementById(`eq_text_${si}_${qi}`);
+      const gEl = document.getElementById(`eq_guide_${si}_${qi}`);
+      const tagEl = document.getElementById(`eq_tag_${si}_${qi}`);
+      if (tEl) q.q = tEl.value.trim();
+      if (gEl) q.guide = gEl.value.trim();
+      if (tagEl) q.tag = tagEl.value;
+    });
+  });
+  persistPositions();
+  scores = {};
+  setAppMode('interview');
+  alert('Perubahan berhasil disimpan! Kamu kembali ke mode interview.');
+}
+
+function addQuestion(si) {
+  positions[currentPos].sections[si].qs.push({ q: 'Pertanyaan baru — klik untuk mengubah teks ini.', guide: 'Panduan penilaian untuk pertanyaan ini.', tag: '' });
+  renderEditMode();
+}
+
+function deleteQuestion(si, qi) {
+  if (!confirm('Hapus pertanyaan ini?')) return;
+  positions[currentPos].sections[si].qs.splice(qi,1);
+  renderEditMode();
+}
+
+function addSection() {
+  positions[currentPos].sections.push({ title: 'Seksi baru', qs: [{ q: 'Pertanyaan baru — klik untuk mengubah teks ini.', guide: 'Panduan penilaian.', tag: '' }] });
+  renderEditMode();
+}
+
+function deleteSection(si) {
+  if (positions[currentPos].sections.length <= 1) { alert('Minimal harus ada satu seksi.'); return; }
+  if (!confirm('Hapus seksi ini beserta semua pertanyaannya?')) return;
+  positions[currentPos].sections.splice(si,1);
+  renderEditMode();
+}
+
+// Init
+renderQuestions();
+updateSummary();
+</script>
+</body>
+</html>
